@@ -10,17 +10,29 @@
             "imports": {
                 "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
                 "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.7.1/index.module.js",
-                "@photo-sphere-viewer/markers-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin@5.7.1/index.module.js"
+                "@photo-sphere-viewer/markers-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin@5.7.1/index.module.js",
+                "@photo-sphere-viewer/equirectangular-video-adapter": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/equirectangular-video-adapter@5.7.1/index.module.js",
+                "@photo-sphere-viewer/video-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/video-plugin@5.7.1/index.module.js",
+                "@photo-sphere-viewer/autorotate-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/autorotate-plugin@5.7.1/index.module.js",
+                "@photo-sphere-viewer/compass-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/compass-plugin@5.7.1/index.module.js",
+                "@photo-sphere-viewer/gallery-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/gallery-plugin@5.7.1/index.module.js",
+                "@photo-sphere-viewer/map-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/map-plugin@5.7.1/index.module.js",
+                "@photo-sphere-viewer/resolution-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/resolution-plugin@5.7.1/index.module.js"
             }
         }
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.7.1/index.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin@5.7.1/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/video-plugin@5.7.1/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/compass-plugin@5.7.1/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/gallery-plugin@5.7.1/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/map-plugin@5.7.1/index.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 </head>
 <body>
 
     <header class="topbar">
-        <div style="display: flex; align-items: center; gap: 30px; height: 100%;">
+        <div class="topbar-left">
             <div class="logo">GoVirtual <span>Pro Editor</span></div>
             <nav class="desktop-menu">
                 <div class="menu-dropdown">
@@ -35,35 +47,43 @@
                         <a href="#" id="menu-exit">🚪 Exit</a>
                     </div>
                 </div>
-                <div class="menu-dropdown"><button class="menu-trigger" style="cursor: not-allowed; opacity: 0.4;">Edit</button></div>
-                <div class="menu-dropdown"><button class="menu-trigger" style="cursor: not-allowed; opacity: 0.4;">Tools</button></div>
-                <div class="menu-dropdown"><button class="menu-trigger" style="cursor: not-allowed; opacity: 0.4;">Help</button></div>
+                <div class="menu-dropdown">
+                    <button class="menu-trigger">Edit</button>
+                    <div class="dropdown-content">
+                        <a href="#" id="menu-undo">↩️ Undo <span class="shortcut">Ctrl+Z</span></a>
+                        <a href="#" id="menu-redo">↪️ Redo <span class="shortcut">Ctrl+Y</span></a>
+                    </div>
+                </div>
             </nav>
         </div>
-        <button class="btn-generate" id="generateBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-            Export Virtual Tour
-        </button>
+        
+        <div class="topbar-right">
+            <button id="themeToggleBtn" class="theme-btn d-flex align-center justify-center" title="Switch Light/Dark Mode">
+                <span id="themeIcon" class="text-16">☀️</span>
+            </button>
+            <button class="btn-generate" id="generateBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Export Virtual Tour
+            </button>
+        </div>
     </header>
 
     <div class="app-container">
-        
         <nav class="global-sidebar">
             <a href="#" class="menu-item" id="menu-dashboard" title="Dashboard"><span class="menu-icon">🏠</span> <span class="menu-text">Dashboard Project</span></a>
             <a href="#" class="menu-item active" id="menu-hotspot" title="Panorama Hotspot"><span class="menu-icon">📍</span> <span class="menu-text">Panorama Hotspot</span></a>
             <a href="#" class="menu-item" id="menu-video360" title="Media Video 360"><span class="menu-icon">📼</span> <span class="menu-text">Media Video 360</span></a>
             <a href="#" class="menu-item" id="menu-intro" title="Video Intro"><span class="menu-icon">🎬</span> <span class="menu-text">Pengaturan Intro</span></a>
             <a href="#" class="menu-item" id="menu-skin" title="Desain Tema / Skin"><span class="menu-icon">🎨</span> <span class="menu-text">Desain UI / Skin</span></a>
-            <a href="#" class="menu-item" title="Pengaturan"><span class="menu-icon">⚙️</span> <span class="menu-text">Pengaturan</span></a>
+            <a href="#" class="menu-item" id="menu-settings" title="Pengaturan Tour"><span class="menu-icon">⚙️</span> <span class="menu-text">Pengaturan Tour</span></a>
         </nav>
 
-        <div class="workspace" id="workspace-hotspot" style="flex-direction: column;">
-            <div class="workspace-top" style="display: flex; flex: 1; overflow: hidden;">
+        <div class="workspace workspace-col" id="workspace-hotspot">
+            <div class="workspace-top-wrap">
                 <main class="main-view">
                     <div id="panorama"></div>
-                    <div class="empty-state" id="emptyState"><p style="margin-top: 10px;">Belum ada scene. Tambahkan panorama pertama.</p></div>
-                    
-                    <div class="toolbar-floating" id="toolbar" style="display: none;">
+                    <div class="empty-state" id="emptyState"><p class="mt-10">Belum ada scene. Tambahkan panorama pertama.</p></div>
+                    <div class="toolbar-floating d-none" id="toolbar">
                         <button class="btn-tool active" id="tool-nav" title="Mode Navigasi (Drag & View)">✋</button>
                         <div class="toolbar-divider"></div>
                         <button class="btn-tool" id="tool-scene" title="Tambah Hotspot Panorama / Scene">🔗</button>
@@ -72,115 +92,293 @@
                         <button class="btn-tool" id="tool-video" title="Tambah Hotspot Putar Video 360">🎥</button>
                     </div>
                 </main>
-                
                 <aside class="panel-right">
                     <div class="panel-tabs">
                         <button class="tab-btn active" data-tab="properties" title="User Data / Properties">🪪 Data</button>
                         <button class="tab-btn" data-tab="hotspots" title="Hotspot List">🎯 Hotspot</button>
                     </div>
-                    
                     <div class="panel-content" id="panelContentRight">
                         <div id="tab-properties" class="tab-pane active">
-                            <div id="propertiesEmpty" style="color: var(--text-muted); font-size: 12px; text-align: center; margin-top: 30px;">Pilih panorama untuk melihat properti.</div>
-                            
-                            <div id="propertiesForm" style="display: none; padding: 20px 15px;">
-                                <div class="form-group" style="margin-bottom: 20px;">
-                                    <label style="font-weight: 600; color: #ccc;">Title (Nama Tampilan)</label>
-                                    <div style="display: flex; align-items: center; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-top: 6px;">
-                                        <input type="text" id="propSceneTitle" class="form-control" style="border: none; border-radius: 0; background: transparent; flex: 1; padding: 10px 12px;" placeholder="Nama Panorama">
-                                    </div>
-                                </div>
-                                <div class="form-group" style="margin-bottom: 25px;">
-                                    <label style="font-weight: 600; color: #ccc;">Author / Copyright</label>
-                                    <input type="text" id="propAuthor" class="form-control" style="margin-top: 6px; padding: 10px 12px; border-radius: 6px;" placeholder="Nama Fotografer">
-                                </div>
-                                <div class="form-group" style="margin-bottom: 25px;">
-                                    <label class="first-scene-toggle" title="Jadikan panorama ini sebagai halaman awal">
-                                        <input type="checkbox" id="propIsFirstScene">
-                                        <div class="toggle-content"><span class="star-icon">⭐</span><span class="toggle-text">Jadikan Titik Awal (Start)</span></div>
-                                    </label>
-                                </div>
-                                <div class="form-group" style="margin-bottom: 25px;">
-                                    <label style="font-weight: 600; color: #ccc; display: block; margin-bottom: 10px;">Default View (Arah Awal)</label>
-                                    <div id="default-view-thumb-container" style="width: 100%; aspect-ratio: 16/9; background: #000; border: 1px dashed var(--border); border-radius: 6px; display: flex; justify-content: center; align-items: center; overflow: hidden; margin-bottom: 10px;">
-                                        <span id="default-view-status" style="color: var(--text-muted); font-size: 12px;">🚫 Belum di-set</span>
-                                        <img id="default-view-img" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                                    </div>
-                                    <button id="btn-set-default-view" class="btn btn-primary" style="width: 100%; padding: 10px; border-radius: 6px;">📸 Capture Default View</button>
-                                </div>
+                            <div id="propertiesEmpty" class="panel-empty-msg">Pilih panorama untuk melihat properti.</div>
+                            <div id="propertiesForm" class="panel-form-wrap d-none">
+                                <div class="form-group mb-20"><label class="label-header">Title (Nama Tampilan)</label><input type="text" id="propSceneTitle" class="form-control input-md" placeholder="Nama Panorama"></div>
+                                <div class="form-group mb-25"><label class="first-scene-toggle" title="Jadikan panorama ini sebagai halaman awal"><input type="checkbox" id="propIsFirstScene"><div class="toggle-content"><span class="star-icon">⭐</span><span class="toggle-text">Jadikan Titik Awal (Start)</span></div></label></div>
+                                <div class="form-group mb-25"><label class="label-header label-block">Default View (Arah Awal)</label><div id="default-view-thumb-container" class="thumb-preview-box"><span id="default-view-status" class="thumb-status">🚫 Belum di-set</span><img id="default-view-img" src="" class="thumb-image d-none"></div><button id="btn-set-default-view" class="btn btn-primary btn-block-md">📸 Capture Default View</button></div>
                             </div>
                         </div>
-                        <div id="tab-hotspots" class="tab-pane" style="display: none;">
-                            <div id="hotspotList"><p style="color: var(--text-muted); font-size: 12px; text-align: center; margin-top: 20px;">Pilih scene untuk melihat hotspot.</p></div>
+                        
+                        <div id="tab-hotspots" class="tab-pane d-none" style="display: flex; flex-direction: column; height: 100%;">
+                            <div id="hotspotList" class="custom-scrollbar" style="flex: 1; overflow-y: auto;">
+                                <p class="panel-empty-msg mt-20">Pilih scene untuk melihat hotspot.</p>
+                            </div>
+                            
+                            <div id="hotspotDetailForm" class="panel-form-wrap d-none" style="border-top: 1px solid var(--border); padding-top: 15px; background: rgba(0,0,0,0.15);">
+                                <label class="shadow-title mb-10" style="display: block; font-size: 11px; font-weight: 700; color: var(--accent);">🎯 PROPERTI HOTSPOT SELEKSI</label>
+                                
+                                <div class="form-group mb-10">
+                                    <label class="props-label-sm">Label / Teks Hover</label>
+                                    <input type="text" id="editHsLabel" class="form-control input-md" placeholder="Nama Label">
+                                </div>
+
+                                <div class="form-group mb-15">
+                                    <label class="props-label-sm">Ukuran / Skala Hotspot (px)</label>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="range" id="editHsSizeSlider" min="20" max="150" value="40" class="form-control" style="flex: 1; cursor: pointer; padding: 0; height: auto;">
+                                        <input type="number" id="editHsSizeNumber" min="20" max="150" value="40" class="form-control" style="width: 65px; padding: 5px; font-family: monospace; text-align: center;">
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-danger btn-danger-block mt-10" id="btnDeleteSelectedHs" style="width: 100%; padding: 8px; font-weight: 600;">Hapus Hotspot</button>
+                            </div>
                         </div>
                     </div>
                 </aside>
             </div>
-
             <aside class="panel-bottom">
-                <div class="panel-header">
-                    <span style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--text-muted);">🎞️ TOUR BROWSER</span>
-                    <button class="btn-add-sm" id="addSceneBtn">+ Tambah Panorama</button>
-                </div>
+                <div class="panel-header flex-between p-8-15"><span class="d-flex align-center gap-8 text-bold text-muted">🎞️ TOUR BROWSER</span><button class="btn-add-sm" id="addSceneBtn">+ Tambah Panorama</button></div>
                 <div class="panel-content-bottom"><div id="sceneList" class="scene-list-horizontal"></div></div>
             </aside>
         </div>
 
-        <div class="workspace" id="workspace-video360" style="display: none; padding: 30px; flex-direction: column; background: var(--bg-dark); width: 100%; overflow-y: auto;">
-            <h2 style="margin-bottom: 20px; color: white;">📼 Manajemen Video 360</h2>
-            <div style="background: var(--bg-panel); padding: 25px; border-radius: 8px; border: 1px solid var(--border);">
-                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Upload video 360 Anda di sini. Video ini akan digunakan sebagai target Hotspot di dalam Virtual Tour.</p>
-                <button class="btn btn-primary" id="btnUploadVideo360" style="padding: 10px 20px; margin-bottom: 20px; cursor: pointer;">+ Upload Video 360 (.mp4)</button>
-                <input type="file" id="inputVideo360" accept="video/mp4,video/webm" multiple style="display: none;">
-                <div id="video360List" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; border-top: 1px dashed var(--border); padding-top: 20px;"></div>
+        <div class="workspace workspace-scrollable d-none" id="workspace-video360">
+            <h2 class="workspace-title">📼 Manajemen Video 360</h2>
+            <div class="workspace-box">
+                <button class="btn btn-primary btn-action-primary" id="btnUploadVideo360">+ Upload Video 360 (.mp4)</button>
+                <input type="file" id="inputVideo360" accept="video/mp4,video/webm" multiple class="d-none">
+                <div id="video360List" class="video-grid-container"></div>
             </div>
         </div>
 
-        <div class="workspace" id="workspace-intro" style="display: none; padding: 30px; flex-direction: column; background: var(--bg-dark); width: 100%; overflow-y: auto;">
-            <h2 style="margin-bottom: 20px; color: white;">🎬 Pengaturan Video Intro</h2>
-            <div style="background: var(--bg-panel); padding: 25px; border-radius: 8px; border: 1px solid var(--border); max-width: 600px;">
-                <div class="form-group">
-                    <label>Video Desktop / Laptop (.mp4 / .webm)</label>
-                    <input type="file" id="uploadVideoDesktop" accept="video/mp4,video/webm" class="form-control">
-                    <div id="statusVideoDesktop" style="color: var(--success); font-size: 12px; display: none;">✅ Tersimpan</div>
-                </div>
-                <div class="form-group" style="margin-top: 25px;">
-                    <label>Video Mobile / HP (.mp4 / .webm)</label>
-                    <input type="file" id="uploadVideoMobile" accept="video/mp4,video/webm" class="form-control">
-                    <div id="statusVideoMobile" style="color: var(--success); font-size: 12px; display: none;">✅ Tersimpan</div>
-                </div>
+        <div class="workspace workspace-scrollable d-none" id="workspace-intro">
+            <h2 class="workspace-title">🎬 Pengaturan Video Intro</h2>
+            <div class="workspace-box workspace-box-md">
+                <div class="form-group"><label>Video Desktop / Laptop (.mp4 / .webm)</label><input type="file" id="uploadVideoDesktop" accept="video/mp4,video/webm" class="form-control"><div id="statusVideoDesktop" class="status-badge-ok d-none">✅ Tersimpan</div></div>
+                <div class="form-group mt-25"><label>Video Mobile / HP (.mp4 / .webm)</label><input type="file" id="uploadVideoMobile" accept="video/mp4,video/webm" class="form-control"><div id="statusVideoMobile" class="status-badge-ok d-none">✅ Tersimpan</div></div>
             </div>
         </div>
 
-        <div class="workspace" id="workspace-skin" style="display: none; padding: 30px; flex-direction: column; background: var(--bg-dark); width: 100%; overflow-y: auto;">
-            <h2 style="margin-bottom: 20px; color: white;">🎨 Desain Tema & Skin</h2>
-            <div style="background: var(--bg-panel); padding: 25px; border-radius: 8px; border: 1px solid var(--border); max-width: 800px;">
-                
-                <!-- FITUR SKIN YANG KEMBALI -->
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label>Pilih Tema / Skin Frame</label>
-                    <select id="skinTemplateSelect" class="form-control" style="background: var(--bg-dark); color: white; border: 1px solid var(--border); padding: 10px; border-radius: 6px; width: 100%;">
-                        <option value="default">Default (Bawaan)</option>
-                        <option value="custom">Custom (Upload Frame Sendiri)</option>
-                    </select>
-                </div>
+        <div class="workspace flex-column p-20 d-none" id="workspace-skin" style="background: var(--bg-dark); width: 100%; overflow: hidden;">
+            <h2 class="workspace-title mb-10" style="padding-left: 20px;">🎨 Desain UI & Welcome Screen</h2>
+            
+            <div class="panel-tabs mb-15" id="skinMainTabs" style="justify-content: flex-start; border-bottom: 1px solid var(--border); padding-left: 20px;">
+                <button class="tab-btn active" data-tab="tab-skin-custom" style="flex: 0 1 auto; padding: 10px 25px; margin-right: 5px; border-radius: 6px 6px 0 0;">🛠️ Custom Design</button>
+                <button class="tab-btn" data-tab="tab-skin-template" style="flex: 0 1 auto; padding: 10px 25px; margin-right: 5px; border-radius: 6px 6px 0 0;">📑 Template Design</button>
+                <button class="tab-btn" data-tab="tab-skin-setup" style="flex: 0 1 auto; padding: 10px 25px; border-radius: 6px 6px 0 0;">⚙️ Setup Welcome Text</button>
+            </div>
 
-                <div id="customSkinUploadGroup" style="display: none; margin-bottom: 20px; padding: 15px; border: 1px dashed var(--border); border-radius: 6px; background: #222;">
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label>Frame Desktop (.png transparan)</label>
-                        <input type="file" id="uploadSkinDesktop" accept="image/png" class="form-control">
-                        <div id="statusSkinDesktop" style="color: var(--success); font-size: 12px; display: none;">✅ Tersimpan</div>
+            <div id="tab-skin-custom" class="tab-pane active" style="display: flex; flex: 1; gap: 20px; overflow: hidden; padding: 0 20px 20px 20px; width: 100%;">
+                <div class="skin-left-panel">
+                    <div class="skin-canvas-wrapper">
+                        <div class="skin-toolbar">
+                            <button class="btn btn-primary btn-sm-action" id="btnSkinAddText"><span style="font-size: 13px; margin-right: 4px;">T</span> Teks</button>
+                            <button class="btn btn-primary btn-sm-action" id="btnSkinAddImage"><span style="font-size: 13px; margin-right: 4px;">🖼️</span> Image</button>
+                            
+                            <div class="toolbar-divider-v"></div>
+                            <button class="btn btn-primary btn-sm-action" id="btnSkinAddRect" title="Tambah Rectangle"><span style="font-size: 13px; margin-right: 4px;">🔲</span> Box</button>
+                            <button class="btn btn-primary btn-sm-action" id="btnSkinAddCircle" title="Tambah Circle/Ellipse"><span style="font-size: 13px; margin-right: 4px;">⭕</span> Circle</button>
+                            <button class="btn btn-primary btn-sm-action" id="btnSkinAddLine" title="Tambah Line/Garis"><span style="font-size: 13px; margin-right: 4px;">➖</span> Line</button>
+                            
+                            <div class="toolbar-divider-v"></div>
+                            <button class="btn device-btn bg-accent" id="btnPreviewDesktop">💻 Desktop</button>
+                            <button class="btn device-btn bg-dark-grey" id="btnPreviewTablet">💊 Tablet</button>
+                            <button class="btn device-btn bg-dark-grey" id="btnPreviewFold">📖 Fold</button>
+                            <button class="btn device-btn bg-dark-grey" id="btnPreviewMobile">📱 Mobile</button>
+                            
+                            <div class="toolbar-divider-v toolbar-divider-auto"></div>
+                            <div class="zoom-wrapper">
+                                <button class="btn zoom-btn" id="btnZoomOut">-</button>
+                                <span id="zoomLevelDisplay" class="zoom-indicator" title="Reset to Fit">Fit</span>
+                                <button class="btn zoom-btn" id="btnZoomIn">+</button>
+                            </div>
+                        </div>
+
+                        <div id="skinCanvasContainer" class="canvas-bg-area custom-scrollbar">
+                            <div id="mockupSpacer" class="canvas-spacer-box">
+                                <div id="deviceMockupWrapper" class="device-wrapper device-desktop canvas-origin-center">
+                                    <div id="skinEditorCanvas" class="canvas-editor-board">
+                                        <div id="skinCanvasOverlayMsg" class="canvas-msg-overlay">
+                                            Belum ada Default View.<br><small>Buka Tab Hotspot & Capture Default View.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <div class="props-panel-wrapper">
+                    <div class="panel-tabs" id="skinPanelTabs">
+                        <button class="tab-btn active" data-tab="tab-skin-props">🎨 Properti</button>
+                        <button class="tab-btn" data-tab="tab-skin-layers">📚 Layers</button>
+                    </div>
+                    
+                    <div id="tab-skin-props" class="tab-pane active" style="display: flex; flex-direction: column; flex: 1; overflow-y: auto;" class="custom-scrollbar">
+                        <div id="skinElementPropsEmpty" class="props-empty-msg">Pilih elemen di canvas untuk mengedit.</div>
+                        
+                        <div id="skinElementPropsForm" class="props-form-body d-none">
+                            <div class="props-row props-group-box">
+                                <div class="form-group props-col"><label class="props-label-sm">Lebar (%)</label><input type="number" id="skinPropWidth" class="form-control" step="0.1"></div>
+                                <div class="form-group props-col"><label class="props-label-sm">Tinggi (%)</label><input type="number" id="skinPropHeight" class="form-control" step="0.1"></div>
+                            </div>
+
+                            <div class="props-group-box" id="propGroupAppearance">
+                                <label class="shadow-title">Penampilan (Appearance)</label>
+                                <div class="grid-2-col">
+                                    <div class="form-group"><label class="props-label-sm">Opacity (0-1)</label><input type="number" id="skinPropOpacity" class="form-control" step="0.1" min="0" max="1" value="1"></div>
+                                    <div class="form-group"><label class="props-label-sm">Radius Sudut (px)</label><input type="number" id="skinPropBorderRadius" class="form-control" value="0"></div>
+                                    <div class="form-group"><label class="props-label-sm">Warna Background</label><input type="color" id="skinPropBgColor" class="color-picker-input color-picker-sm"></div>
+                                    <div class="form-group">
+                                        <label class="props-label-sm">BG Transparan</label>
+                                        <label class="checkbox-wrap mt-10"><input type="checkbox" id="skinPropBgTransparent" class="setting-checkbox"><span class="text-11">Transparan</span></label>
+                                    </div>
+                                </div>
+                                <div class="grid-2-col mt-10">
+                                    <div class="form-group"><label class="props-label-sm">Tebal Garis (px)</label><input type="number" id="skinPropBorderWidth" class="form-control" value="0"></div>
+                                    <div class="form-group"><label class="props-label-sm">Warna Garis</label><input type="color" id="skinPropBorderColor" class="color-picker-input color-picker-sm"></div>
+                                </div>
+                            </div>
+
+                            <div id="propGroupText" class="props-section-divider d-none">
+                                <div class="form-group"><label>Teks</label><textarea id="skinPropText" class="form-control" rows="2"></textarea></div>
+                                <div class="form-group mt-10"><label>Google Font Family</label><select id="skinPropFontFamily" class="form-control font-sans-fallback"></select></div>
+                                <div class="form-group mt-10"><label>Ketebalan (Font Weight)</label><select id="skinPropFontWeight" class="form-control"><option value="300">Light (300)</option><option value="400">Regular (400)</option><option value="600">Semi-Bold (600)</option><option value="700">Bold (700)</option><option value="900">Extra Bold (900)</option></select></div>
+                                <div class="props-row mt-10">
+                                    <div class="form-group props-col"><label>Warna Teks</label><input type="color" id="skinPropColor" class="color-picker-input"></div>
+                                    <div class="form-group props-col"><label>Ukuran Font</label><input type="number" id="skinPropFontSize" class="form-control" value="16"></div>
+                                </div>
+                                <div class="form-group mt-10"><label>Horizontal Align (Rata Teks)</label><select id="skinPropTextAlign" class="form-control"><option value="left">Rata Kiri</option><option value="center">Rata Tengah</option><option value="right">Rata Kanan</option></select></div>
+                                <div class="form-group mt-10"><label>Vertical Align (Rata Kontainer)</label><select id="skinPropVerticalAlign" class="form-control"><option value="flex-start">Atas (Top)</option><option value="center">Tengah (Center)</option><option value="flex-end">Bawah (Bottom)</option></select></div>
+                                <div class="form-group mt-15"><label class="checkbox-wrap"><input type="checkbox" id="skinPropWordWrap" class="setting-checkbox"><span class="text-13">Bungkus Teks (Word Wrap)</span></label></div>
+                            </div>
+
+                            <div id="propGroupImage" class="props-section-divider d-none">
+                                <div class="form-group"><label>Upload Gambar / Ikon</label>
+                                    <input type="file" id="skinPropImageUpload" accept="image/png, image/jpeg, image/gif, image/webp" class="form-control image-upload-sm">
+                                    <img id="skinPropImagePreview" src="" class="image-preview-box d-none">
+                                </div>
+                            </div>
+
+                            <div class="shadow-panel">
+                                <label class="shadow-title">Bayangan Kotak (Box Shadow)</label>
+                                <div class="grid-2-col">
+                                    <div class="form-group"><label class="props-label-sm">Offset X (px)</label><input type="number" id="skinPropShadowX" class="form-control" value="0"></div>
+                                    <div class="form-group"><label class="props-label-sm">Offset Y (px)</label><input type="number" id="skinPropShadowY" class="form-control" value="0"></div>
+                                    <div class="form-group"><label class="props-label-sm">Blur (px)</label><input type="number" id="skinPropShadowBlur" class="form-control" value="0"></div>
+                                    <div class="form-group"><label class="props-label-sm">Warna Bayangan</label><input type="color" id="skinPropShadowColor" class="color-picker-input color-picker-sm"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Tindakan Saat Di-Klik (Action)</label>
+                                <select id="skinPropAction" class="form-control"><option value="none">Tidak Ada (Hanya Tampilan)</option><option value="scene">Pindah Panorama</option><option value="video">Putar Video 360</option><option value="url">Buka Link URL</option></select>
+                            </div>
+                            <div class="form-group mt-10 d-none" id="groupSkinActionTarget"><label id="labelSkinActionTarget">Target</label><div id="skinActionTargetContainer"></div></div>
+                            
+                            <button class="btn btn-danger btn-danger-block" id="btnSkinDeleteElement">Hapus Elemen</button>
+                        </div>
+                    </div>
+
+                    <div id="tab-skin-layers" class="tab-pane d-none" style="flex-direction: column; flex: 1; overflow: hidden;">
+                        <div style="padding: 15px; border-bottom: 1px solid var(--border); font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.4;">
+                            Atur urutan tumpukan elemen (Z-Index).<br><strong style="color: var(--text-main);">Lapisan teratas = Muncul paling depan.</strong>
+                        </div>
+                        <div id="skinLayersContainer" style="flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px;" class="custom-scrollbar">
+                            <div class="props-empty-msg">Belum ada elemen di perangkat ini.</div>
+                        </div>
+                        <div style="padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: var(--bg-panel);">
+                            <button class="btn btn-primary flex-1" id="btnLayerUp" title="Pindah ke depan (Maju)">⬆️ Ke Depan</button>
+                            <button class="btn btn-primary flex-1" id="btnLayerDown" title="Pindah ke belakang (Mundur)">⬇️ Ke Belakang</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-skin-template" class="tab-pane d-none" style="flex: 1; overflow-y: auto; padding: 0 20px 20px 20px;">
+                <div class="workspace-box workspace-box-md">
+                    <h3 class="text-white mb-10">📑 Template Design</h3>
+                    <p class="text-muted text-13">Fitur untuk memilih template desain UI bawaan (Tema Siap Pakai) akan hadir di sini.</p>
+                </div>
+            </div>
+
+            <div id="tab-skin-setup" class="tab-pane d-none" style="flex: 1; overflow-y: auto; padding: 0 20px 20px 20px;">
+                <div class="workspace-box workspace-box-md">
+                    <h3 class="text-white mb-20">⚙️ Pengaturan Layar Sambutan (Welcome Screen)</h3>
+                    
+                    <div class="form-group mb-20">
+                        <label class="text-bold text-white mb-10" style="font-size: 14px;">Frame Template Dasar</label>
+                        <select id="skinTemplateSelect" class="form-control" style="font-size: 14px; padding: 10px;">
+                            <option value="default">Default (Bawaan)</option>
+                            <option value="custom">Custom Upload (Gambar Sendiri)</option>
+                        </select>
+                    </div>
+
+                    <div id="customSkinUploadGroup" class="upload-box-dashed d-none mb-25" style="padding: 20px; background: rgba(0,0,0,0.2);">
+                        <label class="d-block mb-10 text-13 text-white">Upload Gambar Welcome Screen</label>
+                        <input type="file" id="uploadSkinDesktop" accept="image/png, image/jpeg, image/webp" class="form-control mb-10">
+                        <div id="statusSkinDesktop" class="status-badge-ok d-none mb-15">✅ Gambar Desktop Tersimpan</div>
+                        <input type="file" id="uploadSkinMobile" accept="image/png, image/jpeg, image/webp" class="form-control mb-5">
+                        <div id="statusSkinMobile" class="status-badge-ok d-none">✅ Gambar Mobile Tersimpan</div>
+                    </div>
+
                     <div class="form-group">
-                        <label>Frame Mobile (.png transparan)</label>
-                        <input type="file" id="uploadSkinMobile" accept="image/png" class="form-control">
-                        <div id="statusSkinMobile" style="color: var(--success); font-size: 12px; display: none;">✅ Tersimpan</div>
+                        <label class="text-bold text-white mb-10" style="font-size: 14px;">Welcome Text Overlay (Teks Pintu Masuk)</label>
+                        <textarea id="welcomeTextInput" class="form-control" rows="6" style="font-size: 14px; padding: 12px; line-height: 1.5;" placeholder="Tuliskan kata sambutan atau instruksi untuk pengunjung virtual tour..."></textarea>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div class="form-group">
-                    <label>Welcome Text (Deskripsi Lokasi)</label>
-                    <textarea id="welcomeTextInput" class="form-control" rows="5"></textarea>
+        <div class="workspace workspace-scrollable d-none" id="workspace-settings">
+            <h2 class="workspace-title">⚙️ Pengaturan Ekstra (Plugin Tour)</h2>
+            <div class="workspace-box workspace-box-md">
+                <p class="settings-desc-text">Aktifkan fitur-fitur tambahan untuk hasil Export Virtual Tour Anda.</p>
+                
+                <div class="form-group setting-card">
+                    <label class="setting-label-bold">
+                        <input type="checkbox" id="settingAutorotate" class="setting-checkbox">
+                        🔄 Autorotate (Putar Otomatis)
+                    </label>
+                    <p class="setting-helper-text">Panorama akan berputar otomatis saat pengguna tidak melakukan interaksi.</p>
+                </div>
+
+                <div class="form-group setting-card">
+                    <label class="setting-label-bold">
+                        <input type="checkbox" id="settingGallery" class="setting-checkbox">
+                        🖼️ Gallery Thumbnail
+                    </label>
+                    <p class="setting-helper-text">Menampilkan deretan thumbnail panorama di bagian bawah layar.</p>
+                </div>
+
+                <div class="form-group setting-card">
+                    <label class="setting-label-bold">
+                        <input type="checkbox" id="settingCompass" class="setting-checkbox">
+                        🧭 Compass (Kompas Arah)
+                    </label>
+                    <p class="setting-helper-text">Menampilkan indikator kompas di layar untuk orientasi arah utara navigasi.</p>
+                </div>
+
+                <div class="form-group setting-card">
+                    <label class="setting-label-bold">
+                        <input type="checkbox" id="settingResolution" class="setting-checkbox">
+                        HD Resolution Picker
+                    </label>
+                    <p class="setting-helper-text">Menambahkan tombol pemilih kualitas resolusi (Tinggi/Rendah) pada layar pengguna.</p>
+                </div>
+
+                <div class="form-group setting-card">
+                    <label class="setting-label-bold">
+                        <input type="checkbox" id="settingMap" class="setting-checkbox">
+                        🗺️ Mini Map (Peta Lokasi)
+                    </label>
+                    <p class="setting-helper-text">Membuka panel peta miniatur di sudut layar. (Mode sederhana).</p>
+                </div>
+
+                <div class="form-group setting-card setting-card-last">
+                    <label class="setting-label-bold">
+                        <input type="checkbox" id="settingNavbar" class="setting-checkbox" checked>
+                        🎛️ Tampilkan Navbar (Bawah)
+                    </label>
+                    <p class="setting-helper-text">Menampilkan panel kendali bawaan di bagian bawah layar (Zoom, Fullscreen, dll).</p>
                 </div>
             </div>
         </div>
@@ -189,42 +387,74 @@
     <div id="hotspotModal" class="modal">
         <div class="modal-content">
             <div class="modal-title" id="hsModalTitle">Konfigurasi Hotspot</div>
+            
             <div class="form-group">
                 <label>Teks / Label Hover</label>
-                <input type="text" id="hsLabel" class="form-control" placeholder="Contoh: Menuju Ruang Tamu">
+                <input type="text" id="hsLabel" class="form-control" placeholder="Contoh: Menuju Ruang Tamu / Info Penting">
             </div>
-            <div class="form-group" id="groupTargetScene" style="display:none;">
-                <label>Pilih Panorama Tujuan</label>
-                <div id="sceneSelectorGrid" class="scene-selector-grid"></div>
+
+            <div class="modal-section d-none" id="groupTargetScene">
+                <label class="modal-label-title">Pilih Panorama Tujuan</label>
+                <input type="text" id="searchTargetScene" class="form-control search-input-mb" placeholder="🔍 Cari nama panorama..." oninput="window.renderSceneSelectorGrid(this.value)">
+                <div id="sceneSelectorGrid" class="scene-selector-grid custom-scrollbar"></div>
                 <input type="hidden" id="selectedTargetSceneId">
             </div>
-            <div class="form-group" id="groupTargetVideo" style="display:none;">
-                <label>Pilih Media Video 360 Tujuan</label>
-                <div id="videoSelectorGrid" class="scene-selector-grid"></div>
+            
+            <div class="modal-section d-none" id="groupTargetVideo">
+                <label class="modal-label-title">Pilih Media Video 360 Tujuan</label>
+                <div id="videoSelectorGrid" class="scene-selector-grid custom-scrollbar"></div>
                 <input type="hidden" id="selectedTargetVideoId">
             </div>
-            <div class="form-group" id="groupUrl" style="display:none;">
-                <label id="urlLabel">Alamat URL</label>
+
+            <div class="modal-section d-none" id="groupUrl">
+                <label id="urlLabel" class="modal-label-title">Alamat URL</label>
                 <input type="text" id="hsUrl" class="form-control" placeholder="https://contoh.com">
             </div>
+
+            <div class="modal-section hs-style-group">
+                <div class="form-group mb-0">
+                    <label class="modal-label-title">Gaya Ikon Hotspot</label>
+                    <select id="hotspotStyle" class="form-control">
+                        <option value="default">Template 1 (Bawaan / Animasi Panah)</option>
+                        <option value="template2">Template 2 (Lingkaran Target Merah)</option>
+                        <option value="template3">Template 3 (Pin Lokasi Biru)</option>
+                        <option value="custom">Custom (Upload Ikon/GIF Sendiri)</option>
+                    </select>
+                </div>
+                
+                <div id="customHotspotUploadGroup" class="upload-custom-hs d-none">
+                    <label>Upload Ikon Custom (PNG/GIF disarankan)</label>
+                    <input type="file" id="customHotspotFile" accept="image/png, image/jpeg, image/gif, image/webp" class="form-control">
+                    <input type="hidden" id="customHotspotSavedPath" value="">
+                    <div id="statusCustomHotspot" class="status-badge-ok d-none">✅ Ikon Tersimpan</div>
+                    <img id="customHotspotPreview" src="" class="preview-hs-icon d-none">
+                </div>
+            </div>
+
             <div class="modal-actions">
                 <button class="btn btn-cancel" id="btnCancelModal">Batal</button>
-                <button class="btn btn-primary" id="btnSaveModal">Simpan Hotspot</button>
+                <button class="btn btn-primary btn-save-hs" id="btnSaveModal">Simpan Hotspot</button>
             </div>
         </div>
     </div>
 
+    <div id="exportModal" class="modal">
+        <div class="modal-content modal-export-box">
+            <div class="modal-title">Konfigurasi Export Virtual Tour</div>
+            <div class="form-group"><label>Nama Folder Export</label><input type="text" id="exportFolderName" class="form-control" placeholder="Contoh: Proyek_Gedung"></div>
+            <div class="form-group mt-25"><label class="slider-header"><span>Kualitas Kompresi Tiles (JPEG)</span><span id="qualityLabel" class="quality-val">75%</span></label><input type="range" id="exportQualitySlider" min="10" max="100" value="75" class="form-control slider-input"><small class="helper-text-export">*Geser ke kiri untuk file lebih ringan. Geser ke kanan untuk gambar tajam namun file berat.</small></div>
+            <div class="modal-actions mt-30"><button class="btn btn-cancel" onclick="document.getElementById('exportModal').classList.remove('active')">Batal</button><button class="btn btn-primary" id="btnStartExport">🚀 Mulai Export</button></div>
+        </div>
+    </div>
+    
     <div id="progressModal" class="modal">
-        <div class="modal-content" style="width: 500px; text-align: center;">
-            <div class="modal-title" style="border: none; margin-bottom: 10px; font-size: 18px;">Mengekspor Virtual Tour</div>
-            <p id="progressText" style="color: white; font-weight: bold;">Memulai komputasi...</p>
-            <div style="background: var(--bg-dark); border-radius: 8px; height: 12px; width: 100%; border: 1px solid var(--border);">
-                <div id="progressBar" style="background: var(--success); width: 0%; height: 100%; transition: width 0.1s linear;"></div>
-            </div>
-            <div id="progressLog" style="height: 150px; overflow-y: auto; background: #050505; border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 11px; color: #00ffcc; text-align: left; margin-top: 15px;"></div>
+        <div class="modal-content modal-progress-box">
+            <div class="modal-title progress-title">Mengekspor Virtual Tour</div>
+            <p id="progressText" class="progress-msg">Memulai komputasi...</p>
+            <div class="progress-bar-bg"><div id="progressBar" class="progress-bar-fill"></div></div>
+            <div id="progressLog" class="progress-logger"></div>
         </div>
     </div>
-
     <div class="toast-container" id="toastContainer"></div>
 
     <script type="module" src="js/editor.js"></script>

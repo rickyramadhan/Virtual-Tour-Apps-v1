@@ -15,23 +15,31 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* ==========================================================================
+   --- SCROLLBAR GLOBAL MINIMALIS (ALA MAC OS) ---
+   ========================================================================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(120, 120, 120, 0.4); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-main);
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
+    display: flex; flex-direction: column;
+    height: 100vh; overflow: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* --- TOP BAR --- */
 .topbar {
     height: 50px; background-color: #181818; border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100;
+    transition: background-color 0.3s ease;
 }
-.logo { font-size: 16px; font-weight: bold; color: white; display: flex; align-items: center; gap: 8px; }
-.logo span { background: var(--accent); padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+.logo { font-size: 16px; font-weight: bold; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+.logo span { background: var(--accent); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
 .btn-generate {
     background-color: var(--success); color: white; border: none; padding: 8px 20px;
     border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
@@ -39,260 +47,81 @@ body {
 .btn-generate:hover { background-color: #27ae60; }
 .btn-generate:disabled { background-color: #555; cursor: not-allowed; }
 
-/* --- APP CONTAINER (NEW LAYOUT) --- */
-.app-container {
-    display: flex; flex: 1; overflow: hidden;
-}
+/* --- APP CONTAINER --- */
+.app-container { display: flex; flex: 1; overflow: hidden; }
 
-/* --- GLOBAL SIDEBAR MENU (REVISI) --- */
+/* --- GLOBAL SIDEBAR MENU --- */
 .global-sidebar {
-    width: 65px; /* Lebar saat ditutup */
-    background-color: #151515;
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    padding-top: 15px;
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden; /* Mencegah elemen bocor keluar */
-    z-index: 50;
+    width: 65px; background-color: var(--bg-dark); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; padding-top: 15px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease; overflow: hidden; z-index: 50;
 }
-
-.global-sidebar:hover {
-    width: 240px; /* Lebar saat dibuka */
-}
-
+.global-sidebar:hover { width: 240px; }
 .menu-item {
-    display: flex;
-    align-items: center;
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    margin: 0 10px 10px 10px; /* Jarak antar menu */
-    border-radius: 6px;
-    transition: all 0.2s;
-    white-space: nowrap; /* Mencegah teks turun ke bawah */
+    display: flex; align-items: center; color: var(--text-muted); text-decoration: none;
+    font-size: 14px; font-weight: 500; margin: 0 10px 10px 10px; border-radius: 6px; transition: all 0.2s; white-space: nowrap; 
 }
-
-.menu-item:hover { color: white; background-color: var(--bg-hover); }
+.menu-item:hover { color: var(--text-main); background-color: var(--bg-hover); }
 .menu-item.active { color: white; background-color: var(--accent); }
+.menu-icon { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.menu-text { opacity: 0; transform: translateX(-10px); transition: all 0.3s ease; pointer-events: none; }
+.global-sidebar:hover .menu-text { opacity: 1; transform: translateX(0); transition-delay: 0.1s; }
 
-/* Bungkus Ikon agar selalu di tengah secara konsisten */
-.menu-icon {
-    width: 45px; 
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-}
-
-/* Animasi untuk Teks Menu */
-.menu-text {
-    opacity: 0; /* Sembunyikan teks saat sidebar tertutup */
-    transform: translateX(-10px); /* Geser sedikit ke kiri */
-    transition: all 0.3s ease;
-    pointer-events: none; 
-}
-
-/* Munculkan teks saat sidebar di-hover */
-.global-sidebar:hover .menu-text {
-    opacity: 1;
-    transform: translateX(0); /* Kembalikan ke posisi semula */
-    transition-delay: 0.1s; /* Jeda sedikit agar animasinya mulus */
-}
 /* --- WORKSPACE --- */
 .workspace { display: flex; flex: 1; overflow: hidden; }
-/* ==========================================================================
-   --- PANEL BAWAH (TOUR BROWSER ALA PANO2VR) ---
-   ========================================================================== */
+
+/* --- PANEL BAWAH (TOUR BROWSER) --- */
 .panel-bottom {
-    height: 160px; 
-    background-color: #1a1a1a;
-    border-top: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    z-index: 20;
+    height: 160px; background-color: var(--bg-panel); border-top: 1px solid var(--border);
+    display: flex; flex-direction: column; flex-shrink: 0; z-index: 20; transition: background-color 0.3s ease;
 }
-
 .panel-bottom .panel-header {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 8px 15px;
-    background: #111; 
-    border-bottom: 1px solid var(--border);
-    font-size: 12px;
+    display: flex; justify-content: space-between; align-items: center; padding: 8px 15px;
+    background: var(--bg-dark); border-bottom: 1px solid var(--border); font-size: 12px;
 }
-
 .btn-add-sm {
     background: transparent; border: 1px dashed var(--border); color: var(--text-main); 
     padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: 0.2s; font-size: 12px; font-weight: 500;
 }
 .btn-add-sm:hover { border-color: var(--accent); color: var(--accent); background: rgba(0, 122, 204, 0.1); }
+.panel-content-bottom { flex: 1; overflow-x: auto; overflow-y: hidden; padding: 10px 15px; display: flex; align-items: center; }
+.scene-list-horizontal { display: flex; gap: 15px; height: 100%; align-items: center; }
 
-.panel-content-bottom {
-    flex: 1;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 10px 15px;
-    display: flex;
-    align-items: center;
-}
-
-/* Kustomisasi Scrollbar Horizontal */
-.panel-content-bottom::-webkit-scrollbar { height: 8px; }
-.panel-content-bottom::-webkit-scrollbar-track { background: var(--bg-dark); border-radius: 4px; }
-.panel-content-bottom::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
-.panel-content-bottom::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-.scene-list-horizontal {
-    display: flex;
-    gap: 15px;
-    height: 100%;
-    align-items: center;
-}
-
-/* --- KOTAK SCENE ITEM HORIZONTAL (UKURAN FIXED PRESISI) --- */
 .scene-item {
-    background: var(--bg-dark);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    position: relative; 
-    width: 160px; /* Lebar dikunci mutlak */
-    min-width: 160px;
-    height: 105px; /* Tinggi dikunci mutlak */
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    transition: all 0.2s ease;
+    background: var(--bg-dark); border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+    display: flex; flex-direction: column; position: relative; width: 160px; min-width: 160px; height: 105px; 
+    overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.2s ease;
 }
 .scene-item:hover { border-color: #888; transform: translateY(-3px); }
 .scene-item.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.scene-thumb { width: 100%; height: 80px; background-color: var(--bg-hover); background-size: cover; background-position: center; background-repeat: no-repeat; border-bottom: 1px solid var(--border); }
+.scene-title { height: 25px; padding: 0 10px; font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); background: var(--bg-panel); display: flex; align-items: center; justify-content: center; }
 
-/* GAMBAR FULL TANPA BAR HITAM */
-.scene-thumb {
-    width: 100%;
-    height: 80px; /* Ruang gambar presisi rasio panorama */
-    background-color: #222;
-    background-size: cover; /* Paksa gambar mengisi penuh bingkai */
-    background-position: center;
-    background-repeat: no-repeat;
-    border-bottom: 1px solid var(--border);
-}
-
-.scene-title {
-    height: 25px; 
-    padding: 0 10px;
-    font-size: 11px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--text-main);
-    background: var(--bg-panel);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* --- TOMBOL DELETE (SELALU TERLIHAT JELAS / MERAH) --- */
 .scene-delete {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    background: var(--danger); /* Warna dasar selalu merah */
-    border: none;
-    color: white;
-    border-bottom-left-radius: 6px; /* Aksen melengkung elegan di kiri bawah */
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0.85; /* Dibuat sedikit transparan agar gambar di baliknya masih mengintip, tapi ikon sangat jelas */
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 10;
+    position: absolute; top: 0px; right: 0px; background: var(--danger); border: none; color: white;
+    border-bottom-left-radius: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0.85; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10;
 }
+.scene-delete:hover { opacity: 1; width: 32px; height: 32px; background: #ff2020; }
 
-.scene-delete:hover { 
-    opacity: 1; 
-    width: 32px; /* Membesar sedikit saat di-hover */
-    height: 32px; 
-    background: #ff2020; /* Merah menyala */
-}
 /* --- AREA UTAMA (VIEWER) --- */
-.main-view { flex: 1; position: relative; background-color: #000; }
+.main-view { flex: 1; position: relative; background-color: var(--bg-panel); overflow: hidden; border: 1px solid var(--border); }
 #panorama { width: 100%; height: 100%; }
 .empty-state { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); pointer-events: none; }
-/* --- TOOLBAR VERTIKAL ALA PANO2VR --- */
+
+/* --- TOOLBAR VERTIKAL --- */
 .toolbar-floating {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: rgba(30, 30, 30, 0.85);
-    backdrop-filter: blur(10px);
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column; /* Mengubah jejeran menjadi atas ke bawah */
-    gap: 8px;
-    z-index: 10;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    position: absolute; top: 20px; left: 20px; background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(10px);
+    padding: 8px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
-
-.toolbar-divider {
-    height: 1px;
-    background: var(--border);
-    margin: 4px 0;
-}
-
-.btn-tool {
-    background: transparent;
-    color: white;
-    border: none;
-    width: 42px;
-    height: 42px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 20px; /* Diperbesar untuk Ikon/Emoji */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
-    position: relative; /* Wajib untuk Tooltip */
-}
-
+.toolbar-divider { height: 1px; background: var(--border); margin: 4px 0; }
+.btn-tool { background: transparent; color: var(--text-main); border: none; width: 42px; height: 42px; border-radius: 6px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: relative; }
 .btn-tool:hover { background: var(--bg-hover); }
 .btn-tool.active { background: var(--accent); color: white; }
-
-/* Efek Tooltip Keterangan saat mouse diarahkan ke tombol */
-.btn-tool::after {
-    content: attr(title);
-    position: absolute;
-    left: 55px; /* Muncul di sebelah kanan ikon */
-    background: #000;
-    color: #fff;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: 0.2s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    z-index: 20;
-}
+.btn-tool::after { content: attr(title); position: absolute; left: 55px; background: #000; color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; white-space: nowrap; pointer-events: none; opacity: 0; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.5); z-index: 20; }
 .btn-tool:hover::after { opacity: 1; left: 50px; }
-/* --- SIDEBAR KANAN (HOTSPOTS) --- */
-.panel-right { width: 300px; background-color: var(--bg-panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+
+/* --- SIDEBAR KANAN --- */
+.panel-right { width: 300px; background-color: var(--bg-panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; transition: background-color 0.3s; }
 .hotspot-item { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 10px; font-size: 12px; }
 .hotspot-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .hotspot-title { font-weight: bold; color: var(--accent); display: flex; align-items: center; gap: 6px;}
@@ -305,570 +134,351 @@ body {
 .btn-del-hs:hover { opacity: 1; }
 .hs-detail { color: var(--text-muted); margin-bottom: 4px;}
 
-/* --- MODAL UI --- */
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
-.modal.active { display: flex; }
-.modal-content { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; width: 350px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.modal-title { font-size: 16px; margin-bottom: 20px; font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+/* --- MODAL UI REDESIGN --- */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(6px); }
+.modal.active { display: flex; animation: fadeInMenu 0.2s ease-out; }
+.modal-content { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; width: 550px; max-width: 95vw; max-height: 90vh; overflow-y: auto; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.7); }
+.modal-title { font-size: 18px; margin-bottom: 20px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 15px; color: var(--text-main); }
+.modal-section { background: rgba(0,0,0,0.15); border: 1px solid var(--border); padding: 18px; border-radius: 8px; margin-bottom: 15px; }
+
 .form-group { margin-bottom: 15px; }
-.form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-.form-control { width: 100%; background: var(--bg-dark); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 4px; font-size: 13px; outline: none; }
-.form-control:focus { border-color: var(--accent); }
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
-.btn { padding: 8px 16px; border-radius: 4px; border: none; font-size: 13px; cursor: pointer; font-weight: 500; }
-.btn-cancel { background: transparent; color: white; border: 1px solid var(--border); }
-.btn-cancel:hover { background: var(--bg-hover); }
-.btn-primary { background: var(--accent); color: white; }
-.btn-primary:hover { background: var(--accent-hover); }
+.form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+.form-control { width: 100%; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-main); padding: 10px 14px; border-radius: 6px; font-size: 13px; outline: none; transition: all 0.2s ease; }
+.form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.25); }
 
-/* ==========================================================================
-   --- REVISI ENTERPRISE: STALK & BUBBLE NAVIGATION (ALA REFERENSI) ---
-   ========================================================================== */
+/* --- INPUT TYPE FILE PREMIUM --- */
+input[type="file"].form-control { padding: 5px 8px; display: flex; align-items: center; cursor: pointer; }
+input[type="file"]::file-selector-button { background-color: var(--bg-hover); color: var(--text-main); border: 1px solid var(--border); border-radius: 4px; padding: 6px 12px; margin-right: 12px; cursor: pointer; transition: all 0.2s ease; font-family: inherit; font-size: 11px; font-weight: 600; }
+input[type="file"]::file-selector-button:hover { background-color: var(--accent); color: white; border-color: var(--accent); }
 
-/* 1. Titik Dasar Hotspot (Titik putih dengan ring warna) */
-/* 1. Titik Dasar Hotspot (Diperbesar dengan Ring Warna Kuning) */
-.pnlm-custom-base-icon {
-    width: 18px !important;
-    height: 18px !important;
-    background: white !important;
-    border: 5px solid var(--warning) !important; /* Warna kuning menyala */
-    border-radius: 50% !important;
-    box-shadow: 0 0 12px rgba(0,0,0,0.6) !important;
-    cursor: pointer !important;
-    
-    /* Titik ditarik tepat ke tengah kursor (setengah dari 18px) */
-    margin-top: -9px !important;
-    margin-left: -9px !important;
-    z-index: 50 !important;
-}
+.modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; }
+.btn { padding: 8px 16px; border-radius: 6px; border: none; font-size: 13px; cursor: pointer; font-weight: 500; transition: 0.2s; }
+.btn-cancel { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
+.btn-cancel:hover { background: var(--bg-hover); color: var(--danger); border-color: var(--danger); }
+.btn-primary { background: var(--accent); color: white !important; }
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 122, 204, 0.4); }
 
-/* 2. Tooltip dipaksa melayang di atas titik */
-.pnlm-custom-base-icon .pnlm-tooltip.pnlm-custom-tooltip-scene {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: auto !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    
-    bottom: 100% !important; 
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    margin-bottom: 35px !important; /* Ruang untuk tangkai garis */
-    pointer-events: auto !important; 
-}
+/* --- SCENE SELECTOR GRID --- */
+.scene-selector-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 12px; max-height: 250px; overflow-y: auto; background: var(--bg-dark); padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
+.scene-card { background: var(--bg-panel); border-radius: 6px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: 0.2s; position: relative; }
+.scene-card:hover { border-color: #777; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+.scene-card.selected { border-color: var(--accent); background: rgba(0, 122, 204, 0.15); box-shadow: 0 0 0 1px var(--accent); }
+.scene-card-thumb { width: 100%; height: 75px; background-size: cover; background-position: center; position: relative; border-bottom: 1px solid var(--border); }
+.scene-card-title { padding: 8px 6px; font-size: 11px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); font-weight: 500; }
+.selected-badge { position: absolute; top: 5px; left: 5px; background: var(--accent); color: white; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 10px; }
+.scene-card.selected .selected-badge { display: flex; }
 
-/* 3. Kotak Bubble Utama */
-.pnlm-custom-tooltip-scene .pnlm-bubble-rect {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: white;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(0,0,0,0.1);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-    min-width: 220px;
-    max-width: 320px;
-    position: relative;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.2s;
-}
+/* --- PANO2VR STALK BUBBLE (HOTSPOT) --- */
+.pnlm-custom-base-icon { width: 18px !important; height: 18px !important; background: white !important; border: 5px solid var(--warning) !important; border-radius: 50% !important; box-shadow: 0 0 12px rgba(0,0,0,0.6) !important; cursor: pointer !important; margin-top: -9px !important; margin-left: -9px !important; z-index: 50 !important; }
+.pnlm-custom-base-icon .pnlm-tooltip.pnlm-custom-tooltip-scene { display: block !important; visibility: visible !important; opacity: 1 !important; width: auto !important; background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; bottom: 100% !important; left: 50% !important; transform: translateX(-50%) !important; margin-bottom: 35px !important; pointer-events: auto !important; }
+.pnlm-custom-tooltip-scene .pnlm-bubble-rect { display: flex; align-items: center; gap: 12px; background: white; padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 8px 30px rgba(0,0,0,0.4); min-width: 220px; max-width: 320px; position: relative; cursor: pointer; transition: background 0.15s, transform 0.2s; }
+.pnlm-custom-tooltip-scene .pnlm-bubble-rect:hover { background: #f5faff; transform: translateY(-3px); }
+.pnlm-custom-tooltip-scene .pnlm-bubble-rect::after { content: ''; position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); width: 3px; height: 35px; background: white; box-shadow: 2px 0 4px rgba(0,0,0,0.2); pointer-events: none; }
+.pnlm-custom-tooltip-scene .pnlm-hs-thumb { width: 65px; height: 45px; object-fit: cover; border-radius: 6px; background-color: #222; border: 1px solid rgba(0,0,0,0.05); }
+.pnlm-custom-tooltip-scene .pnlm-hs-title { color: #1a1a1a; font-size: 13px; font-weight: 700; line-height: 1.4; white-space: normal; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.editor-hs-icon.editor-hs-scene { display: none !important; }
+.mode-add-hotspot .pnlm-custom-tooltip-scene .pnlm-bubble-rect { border-color: rgba(0, 122, 204, 0.4); background: rgba(255, 255, 255, 0.9); }
 
-.pnlm-custom-tooltip-scene .pnlm-bubble-rect:hover {
-    background: #f5faff;
-    transform: translateY(-3px); /* Efek melayang saat dihover */
-}
-
-/* 3. Tangkai (Batang Garis Putih) */
-.pnlm-custom-tooltip-scene .pnlm-bubble-rect::after {
-    content: '';
-    position: absolute;
-    bottom: -35px; 
-    left: 50%;
-    transform: translateX(-50%);
-    width: 3px;
-    height: 35px;
-    background: white;
-    box-shadow: 2px 0 4px rgba(0,0,0,0.2);
-    pointer-events: none; /* Garisnya tidak perlu mengganggu klik */
-}
-
-/* 5. Thumbnail Dinamis */
-.pnlm-custom-tooltip-scene .pnlm-hs-thumb {
-    width: 65px;
-    height: 45px;
-    object-fit: cover;
-    border-radius: 6px;
-    background-color: #222;
-    border: 1px solid rgba(0,0,0,0.05);
-}
-
-/* 6. Judul Scene Dinamis */
-.pnlm-custom-tooltip-scene .pnlm-hs-title {
-    color: #1a1a1a;
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 1.4;
-    white-space: normal;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
-/* 7. Sembunyikan TOTAL panah standar Pannellum yang jelek */
-.editor-hs-icon.editor-hs-scene {
-    display: none !important;
-}
-
-/* Visualizer tipis saat mode edit aktif */
-.mode-add-hotspot .pnlm-custom-tooltip-scene .pnlm-bubble-rect {
-    border-color: rgba(0, 122, 204, 0.4);
-    background: rgba(255, 255, 255, 0.9);
-}
-/* --- TOAST --- */
 .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-.toast { background: var(--bg-panel); border-left: 4px solid var(--accent); color: white; padding: 12px 20px; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 13px; animation: slideIn 0.3s forwards; opacity: 0; transform: translateX(100%); }
+.toast { background: var(--bg-panel); border-left: 4px solid var(--accent); color: var(--text-main); padding: 12px 20px; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 13px; animation: slideIn 0.3s forwards; opacity: 0; transform: translateX(100%); }
 @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
 body.mode-add-hotspot .pnlm-container { cursor: crosshair !important; }
 
-/* ==========================================================================
-   --- TAHAP 1: SISTEM DESKTOP MENU BAR (TOPBAR) ALA PANO2VR ---
-   ========================================================================== */
-.desktop-menu {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    height: 100%;
-}
+/* --- MENU DROPDOWN --- */
+.desktop-menu { display: flex; gap: 4px; align-items: center; height: 100%; }
+.menu-dropdown { position: relative; display: inline-block; }
+.menu-trigger { background: transparent; color: var(--text-main); border: none; padding: 6px 14px; font-size: 13px; font-weight: 500; border-radius: 4px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+.menu-trigger:hover { background-color: var(--bg-hover); color: var(--text-main); }
+.menu-dropdown:hover .dropdown-content { display: block; }
+.menu-dropdown:hover .menu-trigger { background-color: var(--bg-hover); color: var(--text-main); }
+.dropdown-content { display: none; position: absolute; top: 100%; left: 0; background-color: var(--bg-panel); min-width: 260px; box-shadow: 0 8px 30px rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 6px; padding: 5px 0; z-index: 1000; animation: fadeInMenu 0.15s ease-out; }
+.dropdown-content a { color: var(--text-main); padding: 8px 16px; text-decoration: none; display: flex; justify-content: space-between; align-items: center; font-size: 13px; transition: background 0.12s; }
+.dropdown-content a:hover { background-color: var(--accent); color: white; }
+.dropdown-content a .shortcut { color: var(--text-muted); font-size: 11px; font-weight: normal; padding-left: 25px; }
+.dropdown-content a:hover .shortcut { color: rgba(255, 255, 255, 0.7); }
+.dropdown-divider { height: 1px; background-color: var(--border); margin: 6px 0; }
 
-.menu-dropdown {
-    position: relative;
-    display: inline-block;
-}
+.scene-checkbox { position: absolute; top: 6px; left: 6px; width: 18px; height: 18px; background: rgba(0, 0, 0, 0.6); border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: transparent; transition: all 0.15s ease; z-index: 12; }
+.scene-item:hover .scene-checkbox, .scene-checkbox.checked { border-color: var(--accent); background: rgba(0, 0, 0, 0.8); color: white; }
+.scene-checkbox.checked { background: var(--accent); border-color: var(--accent); color: white; }
 
-.menu-trigger {
-    background: transparent;
-    color: var(--text-main);
-    border: none;
-    padding: 6px 14px;
-    font-size: 13px;
-    font-weight: 500;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-}
-
-.menu-trigger:hover {
-    background-color: var(--bg-hover);
-    color: white;
-}
-
-/* Logic Hover Otomatis untuk Membuka Dropdown */
-.menu-dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.menu-dropdown:hover .menu-trigger {
-    background-color: var(--bg-hover);
-    color: white;
-}
-
-/* Kotak Konten Menu Dropdown */
-.dropdown-content {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #1e1e1e;
-    min-width: 260px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 5px 0;
-    z-index: 1000;
-    animation: fadeInMenu 0.15s ease-out;
-}
-
-@keyframes fadeInMenu {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Item di dalam Dropdown */
-.dropdown-content a {
-    color: var(--text-main);
-    padding: 8px 16px;
-    text-decoration: none;
-    display: flex;
-    justify-content: space-between; /* Membuat teks menu kiri dan shortcut kanan */
-    align-items: center;
-    font-size: 13px;
-    transition: background 0.12s;
-}
-
-.dropdown-content a:hover {
-    background-color: var(--accent);
-    color: white;
-}
-
-/* Label Tombol Pintas (Shortcut) */
-.dropdown-content a .shortcut {
-    color: var(--text-muted);
-    font-size: 11px;
-    font-weight: normal;
-    padding-left: 25px;
-}
-
-.dropdown-content a:hover .shortcut {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.dropdown-divider {
-    height: 1px;
-    background-color: var(--border);
-    margin: 6px 0;
-}
-
-/* --- KOTAK DAFTAR PROJECT (.GOVP) --- */
-.project-list-box {
-    max-height: 220px;
-    overflow-y: auto;
-    background: var(--bg-dark);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 5px;
-}
-.project-list-box::-webkit-scrollbar { width: 6px; }
-.project-list-box::-webkit-scrollbar-track { background: var(--bg-panel); }
-.project-list-box::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
-
-.project-item {
-    padding: 10px 15px;
-    color: var(--text-main);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-}
-.project-item:hover { background: var(--bg-hover); color: white; }
-.project-item .pi-icon { font-size: 16px; color: var(--accent); }
-
-/* --- EFEK VISUAL SAAT DRAG & DROP GAMBAR KE PANEL BAWAH --- */
-.panel-bottom.drag-over {
-    background-color: rgba(0, 122, 204, 0.15) !important;
-    border-top: 2px dashed var(--accent) !important;
-}
-.panel-bottom.drag-over * {
-    pointer-events: none; /* Mencegah elemen di dalam kotak memblokir sensor drag */
-}
-
-/* ==========================================================================
-   --- FITUR SELEKSI MASAL & CHECKBOX TOUR BROWSER ---
-   ========================================================================== */
-.scene-item {
-    position: relative; /* Wajib agar elemen melayang di dalamnya presisi */
-}
-
-/* Kotak Checkbox Kecil di Pojok Kiri Atas Thumbnail */
-.scene-checkbox {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 18px;
-    height: 18px;
-    background: rgba(0, 0, 0, 0.6);
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: transparent; /* Sembunyikan ikon centang default */
-    transition: all 0.15s ease;
-    z-index: 12; /* Di atas gambar thumbnail */
-}
-
-/* Munculkan/nyalakan border saat item disentuh mouse */
-.scene-item:hover .scene-checkbox,
-.scene-checkbox.checked {
-    border-color: var(--accent);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-}
-
-/* Style saat status Terpilih/Checked */
-.scene-checkbox.checked {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white; /* Munculkan ikon centang SVG */
-}
-
-/* Berikan highlight tint biru transparan yang estetik pada item yang diblok */
-.scene-item.selected {
-    border-color: rgba(0, 122, 204, 0.8) !important;
-    background: rgba(0, 122, 204, 0.15);
-}
-
-.scene-item.selected .scene-thumb::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 122, 204, 0.15);
-    pointer-events: none;
-    z-index: 2;
-}
-
-/* ==========================================================================
-   --- SISTEM TAB PANEL KANAN (PROPERTIES & HOTSPOT) ---
-   ========================================================================== */
-.panel-tabs {
-    display: flex;
-    background: #151515;
-    border-bottom: 1px solid var(--border);
-}
-.panel-tabs .tab-btn {
-    flex: 1;
-    background: transparent;
-    color: var(--text-muted);
-    border: none;
-    padding: 10px 0;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-.panel-tabs .tab-btn:hover { color: white; background: var(--bg-hover); }
-.panel-tabs .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--bg-dark); }
-
+.panel-tabs { display: flex; background: var(--bg-dark); border-bottom: 1px solid var(--border); }
+.panel-tabs .tab-btn { flex: 1; background: transparent; color: var(--text-muted); border: none; padding: 10px 0; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.panel-tabs .tab-btn:hover { color: var(--text-main); background: var(--bg-hover); }
+.panel-tabs .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--bg-panel); }
 .tab-pane { display: none; }
 .tab-pane.active { display: block; animation: fadeInMenu 0.2s ease-out; }
 
+.first-scene-badge { position: absolute; bottom: 6px; right: 6px; background: rgba(0, 0, 0, 0.8); color: var(--warning); border: 1px solid var(--warning); border-radius: 4px; padding: 2px 5px; font-size: 10px; font-weight: bold; z-index: 11; display: flex; align-items: center; gap: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.5); animation: fadeInMenu 0.2s ease-out; }
+.first-scene-toggle { display: block; cursor: pointer; user-select: none; }
+.first-scene-toggle input { display: none; }
+.first-scene-toggle .toggle-content { display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(0, 0, 0, 0.3); border: 1px dashed var(--border); padding: 12px 15px; border-radius: 6px; transition: all 0.2s ease; }
+.first-scene-toggle input:checked + .toggle-content { background: rgba(241, 196, 15, 0.1); border-color: var(--warning); border-style: solid; }
+.first-scene-toggle .star-icon { font-size: 14px; filter: grayscale(1); opacity: 0.5; transition: 0.2s; }
+.first-scene-toggle input:checked + .toggle-content .star-icon { filter: grayscale(0); opacity: 1; }
+.first-scene-toggle .toggle-text { font-size: 12px; font-weight: 600; color: var(--text-muted); transition: 0.2s; }
+.first-scene-toggle input:checked + .toggle-content .toggle-text { color: var(--warning); }
+.first-scene-toggle:hover .toggle-content { border-color: #555; }
+
+
 /* ==========================================================================
-   --- VISUAL SCENE SELECTOR (CARDS) - UKURAN DIPERLUAS ---
+   --- KELAS UTILITAS DAN KOMPONEN BARU (Figma Panel Style) ---
    ========================================================================== */
 
-/* 1. Paksa khusus Modal Hotspot agar melar dari 350px menjadi 750px */
-#hotspotModal .modal-content {
-    width: 90%;
-    max-width: 750px; 
-    padding: 30px;
-}
+/* Flexbox & Layout Utilities */
+.d-flex { display: flex; }
+.flex-column, .workspace-col { flex-direction: column; }
+.align-center { align-items: center; }
+.justify-center { justify-content: center; }
+.flex-between { justify-content: space-between; }
+.flex-1 { flex: 1; }
+.h-100 { height: 100%; }
 
-/* 2. Perluas area Grid penampung Card */
-.scene-selector-grid {
-    display: grid;
-    /* Lebar card dibesarkan sedikit dari 120px jadi 140px agar lebih jelas */
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 15px;
-    max-height: 450px; /* Tinggi scrollable diperpanjang dari 300px ke 450px */
-    overflow-y: auto;
-    background: var(--bg-dark);
-    padding: 15px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-}
+.gap-8 { gap: 8px; }
+.gap-10 { gap: 10px; }
+.gap-15 { gap: 15px; }
+.gap-30 { gap: 30px; }
 
-.scene-card {
-    background: var(--bg-panel);
-    border-radius: 6px;
-    overflow: hidden;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: 0.2s;
-    position: relative;
-}
+/* FIX TOPBAR LAYOUT */
+.topbar-left { display: flex; align-items: center; gap: 30px; height: 100%; }
+.topbar-right { display: flex; align-items: center; gap: 15px; height: 100%; }
 
-.scene-card:hover {
-    border-color: #555;
-    transform: translateY(-2px);
-}
+/* Display & Overflow */
+.d-none { display: none; }
+.d-block { display: block; }
+.overflow-hidden { overflow: hidden; }
 
-.scene-card.selected {
-    border-color: var(--accent);
-    background: rgba(0, 122, 204, 0.1);
-}
+/* Spacing (Margin & Padding) */
+.mb-0 { margin-bottom: 0 !important; }
+.mb-5 { margin-bottom: 5px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-25 { margin-bottom: 25px; }
+.mt-10 { margin-top: 10px; }
+.mt-15 { margin-top: 15px; }
+.mt-25 { margin-top: 25px; }
+.mt-30 { margin-top: 30px; }
+.p-8-15 { padding: 8px 15px; }
 
-/* 3. Tinggikan sedikit gambar thumbnail agar proporsional dengan lebarnya */
-.scene-card-thumb {
-    width: 100%;
-    height: 85px; /* Dipertinggi dari 70px ke 85px */
-    background-size: cover;
-    background-position: center;
-    position: relative;
-}
+/* Typography */
+.text-10 { font-size: 10px; }
+.text-11 { font-size: 11px; }
+.text-13 { font-size: 13px; }
+.text-16 { font-size: 16px; }
+.text-bold { font-weight: bold; }
+.text-muted { color: var(--text-muted); }
+.text-white { color: white; }
 
-.scene-card-title {
-    padding: 8px 6px;
-    font-size: 11px; /* Font dibesarkan sedikit */
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--text-main);
-}
+/* Specific Shared Components */
+.theme-btn { background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; transition: 0.2s; }
+.workspace-top-wrap { display: flex; flex: 1; overflow: hidden; }
+.panel-empty-msg { color: var(--text-muted); font-size: 12px; text-align: center; margin-top: 30px; }
+.panel-form-wrap { padding: 20px 15px; }
 
-/* (Bagian tombol zoom dan badge centang biarkan sama seperti sebelumnya) */
-.btn-preview-card {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    width: 24px;
-    height: 24px;
-    background: rgba(0,0,0,0.6);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    color: white;
-    opacity: 0;
-    transition: 0.2s;
-}
+/* Label & Input Overrides (Lebih Rapat ala Figma) */
+.label-header { font-weight: 600; color: #ccc; }
+.label-block { display: block; margin-bottom: 10px; }
+.input-md { margin-top: 6px; padding: 8px 10px; border-radius: 6px; }
+.btn-block-md { width: 100%; padding: 10px; border-radius: 6px; }
 
-.scene-card:hover .btn-preview-card { opacity: 1; }
-.btn-preview-card:hover { background: var(--accent); }
+/* Thumbnail Previews */
+.thumb-preview-box { width: 100%; aspect-ratio: 16/9; background: #000; border: 1px dashed var(--border); border-radius: 6px; display: flex; justify-content: center; align-items: center; overflow: hidden; margin-bottom: 10px; }
+.thumb-status { color: var(--text-muted); font-size: 12px; }
+.thumb-image { width: 100%; height: 100%; object-fit: cover; }
 
-.selected-badge {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    background: var(--accent);
-    color: white;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-}
-.scene-card.selected .selected-badge { display: flex; }
+/* Workspace Containers */
+.workspace-scrollable { padding: 30px; flex-direction: column; background: var(--bg-dark); width: 100%; overflow-y: auto; }
+.workspace-title { margin-bottom: 20px; color: white; }
+.workspace-box { background: var(--bg-panel); padding: 25px; border-radius: 8px; border: 1px solid var(--border); }
+.workspace-box-md { max-width: 600px; }
+.status-badge-ok { color: var(--success); font-size: 12px; margin-top: 5px; }
+.btn-action-primary { padding: 10px 20px; margin-bottom: 20px; cursor: pointer; }
+.video-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; border-top: 1px dashed var(--border); padding-top: 20px; }
 
-/* --- LENCANA INDIKATOR PANORAMA PERTAMA (TOUR BROWSER) --- */
-.first-scene-badge {
-    position: absolute;
-    bottom: 6px;
-    right: 6px;
-    background: rgba(0, 0, 0, 0.8);
-    color: var(--warning);
-    border: 1px solid var(--warning);
-    border-radius: 4px;
-    padding: 2px 5px;
-    font-size: 10px;
-    font-weight: bold;
-    z-index: 11;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    animation: fadeInMenu 0.2s ease-out;
-}
+/* Skin UI Builder */
+.skin-builder-wrap { padding: 20px; flex-direction: row; background: var(--bg-dark); width: 100%; gap: 20px; overflow: hidden; }
+.skin-left-panel { flex: 1; display: flex; flex-direction: column; max-height: 100%; }
+.skin-canvas-wrapper { background: #111; border: 1px solid var(--border); border-radius: 8px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.skin-toolbar { padding: 10px; background: #222; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: center; overflow-x: auto; }
+.btn-sm-action { padding: 6px 10px; font-size: 11px; }
+.toolbar-divider-v { width: 1px; height: 20px; background: #444; margin: 0 5px; }
+.toolbar-divider-auto { margin-left: auto; }
+.device-btn { border:none; color:white; padding: 6px 10px; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+.device-btn:hover { filter: brightness(1.2); }
+.bg-accent { background: var(--accent) !important; }
+.bg-dark-grey { background: #444 !important; }
+
+/* Skin Canvas Area */
+.zoom-wrapper { display: flex; align-items: center; background: #000; border: 1px solid #444; border-radius: 4px; padding: 2px; }
+.zoom-btn { background: transparent; color: white; border: none; padding: 4px 10px; cursor: pointer; }
+.zoom-btn:hover { background: rgba(255,255,255,0.1); border-radius: 3px;}
+.zoom-indicator { color: #00ffcc; font-size: 11px; font-weight: bold; min-width: 45px; text-align: center; cursor: pointer; }
+.canvas-bg-area { flex: 1; overflow: auto; background: #0a0a0a; position: relative; }
+.canvas-spacer-box { display: flex; align-items: center; justify-content: center; min-width: 100%; min-height: 100%; }
+.canvas-origin-center { transform-origin: center center; }
+.canvas-editor-board { position: relative; background-size: cover; background-position: center; border: 1px solid #333; overflow: hidden; }
+.canvas-msg-overlay { position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); color: #666; pointer-events: none; text-align: center; width: 100%; }
+
+/* Skin Properties Panel (Tampilan ala Figma) */
+.props-panel-wrapper { width: 340px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; overflow-y: auto; }
+.props-panel-header { padding: 15px; border-bottom: 1px solid var(--border); font-weight: bold; color: white; font-size: 13px;}
+.props-empty-msg { padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px; }
+.props-form-body { padding: 15px; }
+.props-row { display: flex; gap: 10px; }
+.props-group-box { background: #1a1a1a; padding: 12px; border-radius: 8px; border: 1px solid #2a2a2a; margin-bottom: 15px; }
+.props-col { flex: 1; }
+.props-label-sm { font-size: 11px; color: #aaa; margin-bottom: 6px; display: block; }
+.props-section-divider { margin-bottom: 20px; border-bottom: 1px solid #2a2a2a; padding-bottom: 15px; }
+.font-sans-fallback { font-family: sans-serif; }
+
+/* Styling Input Angka agar lebih ramping */
+input[type="number"].form-control { padding: 6px 8px; font-family: monospace; }
+.color-picker-input { width: 100%; height: 32px; border: none; background: transparent; cursor: pointer; padding:0; border-radius: 4px; overflow: hidden;}
+.color-picker-sm { height: 28px; }
+.checkbox-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.setting-checkbox { cursor: pointer; accent-color: var(--accent); }
+.image-upload-sm { font-size: 11px; padding: 6px; }
+.image-preview-box { width: 100%; max-height: 100px; object-fit: contain; margin-top: 10px; border: 1px dashed #444; border-radius: 4px; padding: 4px;}
+.shadow-panel { margin-bottom: 20px; background: #1a1a1a; padding: 12px; border-radius: 8px; border: 1px solid #2a2a2a; }
+.shadow-title { font-weight: 600; font-size: 12px; margin-bottom: 12px; display: block; color: #ddd; }
+.grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn-danger-block { width: 100%; margin-top: 20px; padding: 8px; font-weight: 600; border-radius: 6px;}
+
+/* Skin Footer Setting */
+.props-footer-area { padding: 15px; border-top: 5px solid var(--bg-dark); margin-top: auto; }
+.props-footer-title { font-weight: bold; color: white; margin-bottom: 15px; font-size: 12px; }
+.select-sm-input { font-size: 12px; padding: 6px; }
+.upload-box-dashed { margin-bottom: 10px; padding: 10px; border: 1px dashed var(--border); border-radius: 6px; background: #222; }
+.file-xs-input { font-size: 10px; margin-bottom: 5px; }
+.file-xs-input-last { font-size: 10px; }
+.textarea-sm-input { font-size: 12px; padding: 8px; }
+
+/* Settings Extra (Plugin) */
+.settings-desc-text { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
+.setting-card { margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px solid var(--border); transition: 0.2s;}
+.setting-card:hover { border-color: #555; background: rgba(0,0,0,0.4); }
+.setting-card-last { margin-bottom: 0; }
+.setting-label-bold { display: flex; align-items: center; gap: 10px; cursor: pointer; color: white; font-size: 14px; font-weight: bold; }
+.setting-helper-text { margin: 5px 0 0 28px; font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+/* Modals Refined */
+.modal-label-title { color: var(--text-main); font-size: 13px; font-weight: 600; margin-bottom: 8px; display: block;}
+.search-input-mb { margin-bottom: 12px; }
+.hs-style-group { margin-top: 15px; margin-bottom: 0; }
+.upload-custom-hs { margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border); }
+.preview-hs-icon { max-width: 60px; max-height: 60px; margin-top: 10px; border-radius: 5px; border: 1px solid #444; }
+.btn-save-hs { padding: 10px 25px; font-weight: 600; }
+
+.modal-export-box { width: 100%; max-width: 450px; }
+.slider-header { display: flex; justify-content: space-between; align-items: center; }
+.quality-val { font-weight: bold; color: var(--accent); font-size: 18px; }
+.slider-input { cursor: pointer; padding: 0; margin-top: 10px; }
+.helper-text-export { color: var(--text-muted); font-size: 11px; display: block; margin-top: 8px; line-height: 1.4; }
+.modal-progress-box { width: 100%; max-width: 500px; text-align: center; }
+.progress-title { border: none; margin-bottom: 10px; font-size: 18px; }
+.progress-msg { color: white; font-weight: bold; }
+.progress-bar-bg { background: var(--bg-dark); border-radius: 8px; height: 12px; width: 100%; border: 1px solid var(--border); overflow: hidden;}
+.progress-bar-fill { background: var(--success); width: 0%; height: 100%; transition: width 0.1s linear; }
+.progress-logger { height: 150px; overflow-y: auto; background: #050505; border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 11px; color: #00ffcc; text-align: left; margin-top: 15px; font-family: monospace; }
+
 /* ==========================================================================
-   --- STYLING PANEL PROPERTIES (SIDEBAR KANAN) ---
+   --- FOKUS BARU: STYLING UNTUK LAYER MANAGER (Z-INDEX) ---
    ========================================================================== */
+.layer-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--border);
+    border-radius: 6px; cursor: pointer; transition: all 0.2s ease; font-size: 12px;
+}
+.layer-item:hover { border-color: #555; background: rgba(0,0,0,0.4); }
+.layer-item.selected { border-color: var(--accent); background: rgba(0, 122, 204, 0.15); box-shadow: 0 0 0 1px var(--accent); }
+.layer-left-content { display: flex; align-items: center; gap: 8px; overflow: hidden; }
+.layer-icon { font-size: 14px; flex-shrink: 0; }
+.layer-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+.layer-actions { display: flex; gap: 6px; }
+.btn-layer-action { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; transition: 0.2s; }
+.btn-layer-action:hover { color: var(--text-main); transform: scale(1.1); }
 
-/* 1. Toggle Button "Titik Awal" (Pengganti Checkbox Biasa) */
-.first-scene-toggle {
-    display: block;
-    cursor: pointer;
-    user-select: none;
+/* ==========================================================================
+   --- DEVICE MOCKUP & DRAG/DROP STYLES ---
+   ========================================================================== */
+.skin-el { position: absolute; box-sizing: border-box; cursor: move; border: 1px solid transparent; }
+.skin-el:hover { border: 1px dashed rgba(255,255,255,0.5); }
+.skin-el.selected { border: 2px dashed #00ffcc !important; box-shadow: inset 0 0 10px rgba(0, 255, 204, 0.3); z-index: 100; }
+.skin-el-text { display: flex; overflow: hidden; } 
+.skin-el-img { background-size: 100% 100%; background-repeat: no-repeat; background-position: center; }
+
+.device-wrapper { transition: transform 0.2s ease; transform-origin: center center; }
+.device-desktop { padding: 20px 20px 40px 20px; border: 12px solid #222; border-radius: 12px; background: #000; position: relative; border-bottom-width: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+.device-desktop::after { content: ''; position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); width: 60px; height: 6px; background: #444; border-radius: 10px; }
+.device-tablet { padding: 40px 15px; border: 16px solid #222; border-radius: 24px; background: #000; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+.device-tablet::after { content: ''; position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 16px; height: 16px; border: 2px solid #444; border-radius: 50%; }
+.device-fold { padding: 30px 10px; border: 12px solid #222; border-radius: 20px; background: #000; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+.device-mobile { padding: 45px 12px; border: 14px solid #111; border-radius: 36px; background: #000; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+.device-mobile::before { content: ''; position: absolute; top: 0px; left: 50%; transform: translateX(-50%); width: 120px; height: 25px; background: #111; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10; }
+
+/* ==========================================================================
+   --- LIGHT MODE OVERRIDES ---
+   ========================================================================== */
+body.light-mode {
+    --bg-dark: #f0f2f5;
+    --bg-panel: #ffffff;
+    --bg-hover: #e4e6e9;
+    --border: #d0d7de;
+    --text-main: #1c1e21;
+    --text-muted: #65676b;
 }
 
-.first-scene-toggle input {
-    display: none; /* Sembunyikan kotak centang bawaan browser */
+body.light-mode ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.25); }
+body.light-mode ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+body.light-mode .modal-content { box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
+body.light-mode .scene-selector-grid { background: #f8f9fa; }
+body.light-mode .modal-section { background: rgba(0,0,0,0.03); }
+
+/* Override Inline Class Replacement for Light Mode */
+body.light-mode .workspace-box { background: #f8f9fa; border-color: #d0d7de; }
+body.light-mode .skin-canvas-wrapper { background: #f8f9fa; border-color: #d0d7de; }
+body.light-mode .skin-toolbar { background: #e4e6e9; border-color: #d0d7de; }
+body.light-mode .canvas-bg-area { background: #eef0f3; }
+body.light-mode .props-group-box, 
+body.light-mode .shadow-panel,
+body.light-mode .setting-card { background: rgba(0,0,0,0.03); border-color: #d0d7de; }
+body.light-mode .toolbar-divider-v { background: #c0c7ce; }
+body.light-mode .zoom-wrapper { background: #fff; border-color: #d0d7de; }
+body.light-mode .zoom-btn { color: var(--text-main); }
+body.light-mode .zoom-indicator { color: var(--accent); }
+body.light-mode .workspace-title, 
+body.light-mode .props-header-title, 
+body.light-mode .props-footer-title, 
+body.light-mode .setting-label-bold, 
+body.light-mode .progress-msg { color: var(--text-main) !important; }
+body.light-mode .upload-box-dashed { background: #f0f2f5; border-color: #d0d7de; }
+body.light-mode .progress-bar-bg { background: #e4e6e9; border-color: #d0d7de; }
+body.light-mode .progress-logger { background: #fff; border-color: #d0d7de; color: #007acc; }
+
+/* Override Light Mode untuk Panel Layers */
+body.light-mode .layer-item { background: #f8f9fa; border-color: #d0d7de; }
+body.light-mode .layer-item:hover { background: #e4e6e9; }
+body.light-mode .layer-item.selected { background: rgba(0, 122, 204, 0.1); border-color: var(--accent); }
+
+/* Keep specific elements dark visually if needed */
+body.light-mode [style*="background: #000"],
+body.light-mode [style*="background: #0a0a0a"],
+body.light-mode [style*="background-color: #000"] { background-color: var(--bg-dark) !important; }
+
+body.light-mode h2, body.light-mode .modal-title,
+body.light-mode [style*="color: white"]:not(.btn):not(.btn-generate):not(.btn-tool):not(.start-btn):not(.skip-btn):not(.editor-hs-icon):not(.scene-delete) {
+    color: var(--text-main) !important;
 }
 
-.first-scene-toggle .toggle-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px dashed var(--border);
-    padding: 12px 15px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-}
+body.light-mode .btn-tool { color: var(--text-main) !important; }
+body.light-mode .btn-tool.active { color: white !important; }
+body.light-mode .toolbar-floating { background: rgba(255, 255, 255, 0.9) !important; }
 
-/* Saat kondisi sedang dicentang/aktif */
-.first-scene-toggle input:checked + .toggle-content {
-    background: rgba(241, 196, 15, 0.1); /* Background kuning transparan */
-    border-color: var(--warning);
-    border-style: solid;
+body.light-mode .device-desktop, body.light-mode .device-tablet, body.light-mode .device-fold, body.light-mode .device-mobile {
+    background-color: #ffffff !important; border-color: #d0d7de !important; box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
 }
-
-.first-scene-toggle .star-icon {
-    font-size: 14px;
-    filter: grayscale(1); /* Bintang abu-abu jika belum aktif */
-    opacity: 0.5;
-    transition: 0.2s;
-}
-
-.first-scene-toggle input:checked + .toggle-content .star-icon {
-    filter: grayscale(0); /* Bintang menyala jika aktif */
-    opacity: 1;
-}
-
-.first-scene-toggle .toggle-text {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-    transition: 0.2s;
-}
-
-.first-scene-toggle input:checked + .toggle-content .toggle-text {
-    color: var(--warning); /* Teks jadi kuning jika aktif */
-}
-
-.first-scene-toggle:hover .toggle-content {
-    border-color: #555;
-}
-
-/* 2. Garis Pemisah (Divider) Estetik */
-.properties-divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    margin: 25px 0 20px 0;
-}
-
-.properties-divider::before, 
-.properties-divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px dashed var(--border);
-}
-
-.properties-divider span {
-    padding: 0 10px;
-    color: var(--text-muted);
-    font-size: 10px;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-
-/* 3. Input Data File (Mati / Read-Only) */
-.read-only-input {
-    background: rgba(0, 0, 0, 0.25) !important;
-    border-color: transparent !important;
-    color: #888 !important;
-    font-size: 11px !important;
-    padding: 8px 10px !important;
-    cursor: not-allowed !important;
-}
-
-.path-input {
-    color: var(--accent) !important;
-    font-family: monospace;
-}
+body.light-mode .device-desktop::after { background: #b0b0b0 !important; }
+body.light-mode .device-tablet::after { border-color: #b0b0b0 !important; }
+body.light-mode .device-mobile::before { background: #e4e6e9 !important; }
