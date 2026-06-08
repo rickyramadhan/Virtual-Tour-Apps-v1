@@ -58,6 +58,9 @@
         </div>
         
         <div class="topbar-right">
+             <div id="licenseStatusBadge" style="display: inline-block; padding: 6px 12px; background-color: #333; color: #888; border-radius: 20px; font-size: 11px; font-weight: bold; border: 1px solid #444; letter-spacing: 0.5px; cursor: help;">
+                Mengecek Lisensi...
+        </div>
             <button id="themeToggleBtn" class="theme-btn d-flex align-center justify-center" title="Switch Light/Dark Mode">
                 <span id="themeIcon" class="text-16">☀️</span>
             </button>
@@ -382,6 +385,7 @@
                 </div>
             </div>
         </div>
+       
     </div>
 
     <div id="hotspotModal" class="modal">
@@ -456,7 +460,31 @@
         </div>
     </div>
     <div class="toast-container" id="toastContainer"></div>
+    <div id="licenseModal" class="modal" style="z-index: 9999; background: rgba(0,0,0,0.9);">
+        <div class="modal-content" style="max-width: 400px; text-align: center; border: 1px solid var(--primary);">
+            <h2 style="margin-bottom: 10px; color: var(--primary);">Aktivasi GoVirtual Pro</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+                Aplikasi ini dikunci khusus untuk perangkat ini. Silakan masukkan Lisensi untuk melanjutkan.
+            </p>
+            
+            <div style="background: #111; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #444;">
+                <p style="font-size: 11px; color: #888; margin-bottom: 5px; text-transform: uppercase;">Hardware ID Anda:</p>
+                <code id="machineIdDisplay" style="color: #00ff00; font-size: 16px; user-select: all; cursor: copy;" title="Blok dan Copy ID ini">Memuat ID...</code>
+                <p style="font-size: 11px; color: #666; margin-top: 10px;">
+                    Copy dan kirimkan ID di atas ke tim Support untuk mendapatkan <b>License Key</b> Anda.
+                </p>
+            </div>
 
+            <div class="form-group" style="text-align: left;">
+                <label>License Key:</label>
+                <input type="text" id="licenseKeyInput" class="form-control" placeholder="XXXX-XXXX-XXXX-XXXX" style="text-align: center; letter-spacing: 2px; font-weight: bold; font-family: monospace; font-size: 16px;">
+            </div>
+            
+            <button class="btn btn-primary" id="btnActivateLicense" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 16px;">
+                🔑 Aktivasi Sekarang
+            </button>
+        </div>
+    </div>
     <script type="module" src="js/editor.js"></script>
 </body>
 </html>

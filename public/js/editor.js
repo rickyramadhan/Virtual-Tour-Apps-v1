@@ -84,7 +84,14 @@ const googleFontsList = [ "Arial, sans-serif", "Roboto", "Open Sans", "Lato", "M
 function populateFontSelect() { const select = document.getElementById('skinPropFontFamily'); if(!select) return; select.innerHTML = googleFontsList.map(font => { let val = font === "Arial, sans-serif" ? "Arial" : font; return `<option value="${val}" style="font-family: '${val}';">${val}</option>`; }).join(''); } populateFontSelect();
 function loadGoogleFont(fontName) { if(!fontName || fontName === 'Arial') return; const fontId = 'font-' + fontName.replace(/\s+/g, '-').toLowerCase(); if (!document.getElementById(fontId)) { const link = document.createElement('link'); link.id = fontId; link.rel = 'stylesheet'; link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@300;400;600;700&display=swap`; document.head.appendChild(link); } }
 window.showToast = function(message, type = 'normal') { const container = document.getElementById('toastContainer'); if(!container) return; const toast = document.createElement('div'); toast.className = 'toast'; if (type === 'error') toast.style.borderLeftColor = 'var(--danger)'; if (type === 'success') toast.style.borderLeftColor = 'var(--success)'; toast.innerText = message; container.appendChild(toast); setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000); };
-
+// 📊 FUNGSI BARU: Mengirim aktivitas user ke server (Analytics)
+window.logUserAction = function(actionName, actionDetail = {}) {
+    fetch('/api/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: actionName, detail: actionDetail })
+    }).catch(e => console.error("Telemetri gagal:", e)); 
+};
 let currentSkinPreviewMode = 'desktop'; let currentZoomLevel = 'fit'; const ZOOM_STEPS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3];
 const previewBtns = { 'desktop': document.getElementById('btnPreviewDesktop'), 'tablet': document.getElementById('btnPreviewTablet'), 'fold': document.getElementById('btnPreviewFold'), 'mobile': document.getElementById('btnPreviewMobile') };
 
@@ -136,6 +143,7 @@ window.createNewSkinElement = function(type) {
     if(type === 'text') { defWidth = 25; defHeight = 10; defContent = 'Teks Baru'; } else if (type === 'rect') { defWidth = 20; defHeight = 20; defBgColor = '#007acc'; defBgTrans = false; } else if (type === 'circle') { defWidth = 15; defHeight = 15; defBgColor = '#e74c3c'; defBgTrans = false; } else if (type === 'line') { defWidth = 30; defHeight = 0.5; defBgColor = '#ffffff'; defBgTrans = false; }
     const newEl = { id: newId, type: type, targetDevice: currentSkinPreviewMode, left: 40, top: 40, width: defWidth, height: defHeight, content: defContent, color: '#ffffff', fontSize: 16, fontFamily: 'Roboto', fontWeight: 400, textAlign: 'center', verticalAlign: 'center', wordWrap: true, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowColor: '#000000', opacity: 1, borderRadius: type === 'circle' ? 50 : 0, bgColor: defBgColor, bgTransparent: defBgTrans, borderWidth: 0, borderColor: '#ffffff', action: 'none', target: '' };
     if (!skinConfig.uiElements) skinConfig.uiElements = []; skinConfig.uiElements.push(newEl); window.selectSkinElement(newId); renderSkinElements(); window.saveHistoryState();
+    window.logUserAction('ADD_SKIN_ELEMENT', { elementType: type, device: currentSkinPreviewMode });
 };
 
 document.getElementById('btnSkinAddText')?.addEventListener('click', () => window.createNewSkinElement('text')); document.getElementById('btnSkinAddImage')?.addEventListener('click', () => window.createNewSkinElement('image')); document.getElementById('btnSkinAddRect')?.addEventListener('click', () => window.createNewSkinElement('rect')); document.getElementById('btnSkinAddCircle')?.addEventListener('click', () => window.createNewSkinElement('circle')); document.getElementById('btnSkinAddLine')?.addEventListener('click', () => window.createNewSkinElement('line'));
@@ -395,9 +403,54 @@ document.getElementById('addSceneBtn')?.addEventListener('click', () => {
     input.click(); 
 });
 
-window.processPanoramaFiles = async function(files) { if (files.length === 0) return window.showToast(`Pilih setidaknya 1 gambar.`, "error"); window.showToast(`Memulai upload...`, "normal"); for (let i = 0; i < files.length; i++) { const formData = new FormData(); formData.append('image', files[i]); try { const res = await fetch('/api/upload', { method: 'POST', body: formData }); const data = await res.json(); if (data.success) { const newId = 'scene_' + Date.now() + '_' + i; scenes.push({ id: newId, title: files[i].name.replace(/\.[^/.]+$/, ""), imagePath: data.file.path, previewPath: data.file.previewPath, fileSize: data.file.size, fileDimensions: data.file.dimensions, fileType: data.file.type, author: "", hotSpots: [] }); if (!firstSceneId) firstSceneId = newId; if (!currentSceneId) { selectedSceneIds = [newId]; window.loadSceneToViewer(newId); } else window.renderSceneList(); window.saveHistoryState(); } } catch(err) { window.showToast(`Error: ${err.message}`, "error"); } } };
+window.processPanoramaFiles = async function(files) { 
+    if (files.length === 0) return window.showToast(`Pilih setidaknya 1 gambar.`, "error"); 
+    window.showToast(`Memulai upload...`, "normal"); 
+    for (let i = 0; i < files.length; i++) { 
+        const formData = new FormData(); formData.append('image', files[i]); 
+        try { 
+            const res = await fetch('/api/upload', { method: 'POST', body: formData }); 
+            const data = await res.json(); 
+            
+            // JIKA UPLOAD SUKSES
+            if (data.success) { 
+                const newId = 'scene_' + Date.now() + '_' + i; 
+                scenes.push({ id: newId, title: files[i].name.replace(/\.[^/.]+$/, ""), imagePath: data.file.path, previewPath: data.file.previewPath, fileSize: data.file.size, fileDimensions: data.file.dimensions, fileType: data.file.type, author: "", hotSpots: [] }); 
+                if (!firstSceneId) firstSceneId = newId; 
+                if (!currentSceneId) { selectedSceneIds = [newId]; window.loadSceneToViewer(newId); } else window.renderSceneList(); 
+                window.saveHistoryState(); 
+            } 
+            // JIKA UPLOAD DITOLAK OLEH KEAMANAN SERVER
+            else {
+                window.showToast(`Ditolak: ${data.error}`, "error");
+            }
+        } catch(err) { 
+            window.showToast(`Error Sistem: ${err.message}`, "error"); 
+        } 
+    } 
+};
 document.getElementById('btnUploadVideo360')?.addEventListener('click', () => document.getElementById('inputVideo360')?.click());
-document.getElementById('inputVideo360')?.addEventListener('change', async (e) => { const files = e.target.files; if (!files || files.length === 0) return; window.showToast(`Mengupload video 360...`, "normal"); for (let i = 0; i < files.length; i++) { const formData = new FormData(); formData.append('image', files[i]); try { const res = await fetch('/api/upload', { method: 'POST', body: formData }); const data = await res.json(); if (data.success) { mediaVideo360.push({ id: 'vid360_' + Date.now() + '_' + i, title: files[i].name, path: data.file.path }); window.saveHistoryState(); } } catch(err) {} } window.renderVideo360List(); e.target.value = ''; window.showToast("Upload Video 360 selesai!", "success"); });
+document.getElementById('inputVideo360')?.addEventListener('change', async (e) => { 
+    const files = e.target.files; if (!files || files.length === 0) return; 
+    window.showToast(`Mengupload video 360...`, "normal"); 
+    for (let i = 0; i < files.length; i++) { 
+        const formData = new FormData(); formData.append('image', files[i]); 
+        try { 
+            const res = await fetch('/api/upload', { method: 'POST', body: formData }); 
+            const data = await res.json(); 
+            if (data.success) { 
+                mediaVideo360.push({ id: 'vid360_' + Date.now() + '_' + i, title: files[i].name, path: data.file.path }); 
+                window.saveHistoryState(); 
+                window.showToast("Upload Video 360 selesai!", "success");
+            } else {
+                window.showToast(`Ditolak: ${data.error}`, "error");
+            }
+        } catch(err) {
+            window.showToast(`Error: ${err.message}`, "error");
+        } 
+    } 
+    window.renderVideo360List(); e.target.value = ''; 
+});
 window.renderVideo360List = function() { const container = document.getElementById('video360List'); if (!container) return; if (mediaVideo360.length === 0) { container.innerHTML = `<div style="color: var(--text-muted); font-size: 12px; grid-column: 1/-1;">Belum ada video 360.</div>`; return; } container.innerHTML = mediaVideo360.map(vid => `<div class="scene-item" style="flex-direction: column; align-items: flex-start; padding: 10px; background: #222; border-radius: 6px; border: 1px solid var(--border);"><div style="width: 100%; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 30px;">🎥</div><div style="font-size: 11px; color: white; margin-bottom: 10px; word-break: break-all;">${vid.title}</div><button class="btn btn-danger" style="width: 100%; padding: 5px; font-size: 11px;" onclick="window.deleteVideo360('${vid.id}')">Hapus</button></div>`).join(''); };
 
 window.openHotspotModal = function() { 
@@ -413,7 +466,35 @@ window.openHotspotModal = function() {
     const modalEl = document.getElementById('hotspotModal'); if(modalEl) modalEl.classList.add('active'); 
 };
 document.getElementById('hotspotStyle')?.addEventListener('change', (e) => { const group = document.getElementById('customHotspotUploadGroup'); if(group) group.style.display = e.target.value === 'custom' ? 'block' : 'none'; });
-document.getElementById('customHotspotFile')?.addEventListener('change', async (e) => { const file = e.target.files[0]; if (!file) return; const formData = new FormData(); formData.append('image', file); try { window.showToast("Mengupload ikon...", "normal"); const res = await fetch('/api/upload', { method: 'POST', body: formData }); const data = await res.json(); if (data.success) { document.getElementById('customHotspotSavedPath').value = data.file.path; document.getElementById('statusCustomHotspot').style.display = 'block'; document.getElementById('customHotspotPreview').src = data.file.path; document.getElementById('customHotspotPreview').style.display = 'block'; window.showToast("Ikon custom berhasil diupload!", "success"); } else window.showToast("Gagal upload ikon", "error"); } catch(err) { window.showToast("Error upload ikon", "error"); } });
+document.getElementById('customHotspotFile')?.addEventListener('change', async (e) => { 
+    const file = e.target.files[0]; if (!file) return; 
+    const formData = new FormData(); formData.append('image', file); 
+    try { 
+        window.showToast("Mengupload ikon...", "normal"); 
+        // 📊 FUNGSI BARU: Mengirim aktivitas user ke server (Analytics)
+window.logUserAction = function(actionName, actionDetail = {}) {
+    fetch('/api/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: actionName, detail: actionDetail })
+    }).catch(e => console.error("Telemetri gagal:", e)); // Diam-diam saja kalau gagal, agar tidak ganggu user
+};
+        const res = await fetch('/api/upload', { method: 'POST', body: formData }); 
+        const data = await res.json(); 
+        if (data.success) { 
+            document.getElementById('customHotspotSavedPath').value = data.file.path; 
+            document.getElementById('statusCustomHotspot').style.display = 'block'; 
+            document.getElementById('customHotspotPreview').src = data.file.path; 
+            document.getElementById('customHotspotPreview').style.display = 'block'; 
+            window.showToast("Ikon custom berhasil diupload!", "success"); 
+        } else {
+            // Tampilkan error dari server
+            window.showToast(data.error, "error"); 
+        } 
+    } catch(err) { 
+        window.showToast("Error sistem saat upload ikon", "error"); 
+    } 
+});
 document.getElementById('btnCancelModal')?.addEventListener('click', () => document.getElementById('hotspotModal')?.classList.remove('active'));
 document.getElementById('btnSaveModal')?.addEventListener('click', () => { const label = document.getElementById('hsLabel')?.value.trim() || 'Titik Hotspot'; const type = activeTool; let targetScene = null, url = null, targetVideo = null; if (type === 'scene') { targetScene = document.getElementById('selectedTargetSceneId')?.value; if (!targetScene) return window.showToast('Pilih tujuan!', 'error'); } else if (type === 'video') { targetVideo = document.getElementById('selectedTargetVideoId')?.value; if (!targetVideo) return window.showToast('Pilih Video 360!', 'error'); } else if (type === 'url') { url = document.getElementById('hsUrl')?.value.trim(); if (!url) return window.showToast('Isi URL!', 'error'); if (!url.startsWith('http')) url = 'https://' + url; } const iconStyle = document.getElementById('hotspotStyle') ? document.getElementById('hotspotStyle').value : 'default'; const customIconPath = document.getElementById('customHotspotSavedPath') ? document.getElementById('customHotspotSavedPath').value : ''; if (iconStyle === 'custom' && !customIconPath) return window.showToast('Upload ikon custom terlebih dahulu!', 'error'); scenes.find(s => s.id === currentSceneId).hotSpots.push({ pitch: pendingCoords.pitch, yaw: pendingCoords.yaw, type, text: label, targetScene, targetVideo, url, iconStyle, customIconPath, size: 40 }); document.getElementById('hotspotModal')?.classList.remove('active'); window.showToast("Hotspot tersimpan!", "success"); window.loadSceneToViewer(currentSceneId); document.getElementById('tool-nav')?.click(); window.saveHistoryState(); });
 
@@ -422,7 +503,7 @@ document.getElementById('btnSaveModal')?.addEventListener('click', () => { const
 const menuHotspot = document.getElementById('menu-hotspot'); const menuIntro = document.getElementById('menu-intro'); const menuSkin = document.getElementById('menu-skin'); const menuVideo360 = document.getElementById('menu-video360'); const menuSettings = document.getElementById('menu-settings');
 const workHotspot = document.getElementById('workspace-hotspot'); const workIntro = document.getElementById('workspace-intro'); const workSkin = document.getElementById('workspace-skin'); const workVideo360 = document.getElementById('workspace-video360'); const workSettings = document.getElementById('workspace-settings');
 
-window.switchWorkspace = function(activeMenu, activeWork) { [menuHotspot, menuIntro, menuSkin, menuVideo360, menuSettings].forEach(m => m?.classList.remove('active')); [workHotspot, workIntro, workSkin, workVideo360, workSettings].forEach(w => { if(w) w.style.display = 'none'; }); if(activeMenu) activeMenu.classList.add('active'); if(activeWork === workSkin) { activeWork.style.display = 'flex'; initSkinCanvas(); } else if(activeWork) { activeWork.style.display = 'flex'; } };
+window.switchWorkspace = function(activeMenu, activeWork) { [menuHotspot, menuIntro, menuSkin, menuVideo360, menuSettings].forEach(m => m?.classList.remove('active')); [workHotspot, workIntro, workSkin, workVideo360, workSettings].forEach(w => { if(w) w.style.display = 'none'; }); if(activeMenu) activeMenu.classList.add('active'); if(activeWork === workSkin) { activeWork.style.display = 'flex'; initSkinCanvas(); } else if(activeWork) { activeWork.style.display = 'flex'; } if(activeMenu) window.logUserAction('OPEN_MENU', { menuId: activeMenu.id }); };
 menuHotspot?.addEventListener('click', (e) => { e.preventDefault(); window.switchWorkspace(menuHotspot, workHotspot); }); menuIntro?.addEventListener('click', (e) => { e.preventDefault(); window.switchWorkspace(menuIntro, workIntro); }); menuSkin?.addEventListener('click', (e) => { e.preventDefault(); window.switchWorkspace(menuSkin, workSkin); }); menuVideo360?.addEventListener('click', (e) => { e.preventDefault(); window.switchWorkspace(menuVideo360, workVideo360); }); menuSettings?.addEventListener('click', (e) => { e.preventDefault(); window.switchWorkspace(menuSettings, workSettings); });
 
 document.querySelectorAll('.panel-tabs .tab-btn').forEach(btn => { 
@@ -442,7 +523,23 @@ document.querySelectorAll('.panel-tabs .tab-btn').forEach(btn => {
     }); 
 });
 
-document.getElementById('uploadVideoDesktop')?.addEventListener('change', () => handleGenericUpload('uploadVideoDesktop', 'statusVideoDesktop', 'desktop', introVideo)); document.getElementById('uploadVideoMobile')?.addEventListener('change', () => handleGenericUpload('uploadVideoMobile', 'statusVideoMobile', 'mobile', introVideo)); async function handleGenericUpload(inputId, statusId, objectKey, targetObject) { const file = document.getElementById(inputId).files[0]; if (!file) return; const formData = new FormData(); formData.append('image', file); const res = await fetch('/api/upload', { method: 'POST', body: formData }); const data = await res.json(); if (data.success) { targetObject[objectKey] = data.file.path; const statusEl = document.getElementById(statusId); if(statusEl) statusEl.style.display = 'block'; window.saveHistoryState(); } }
+document.getElementById('uploadVideoDesktop')?.addEventListener('change', () => handleGenericUpload('uploadVideoDesktop', 'statusVideoDesktop', 'desktop', introVideo)); document.getElementById('uploadVideoMobile')?.addEventListener('change', () => handleGenericUpload('uploadVideoMobile', 'statusVideoMobile', 'mobile', introVideo)); async function handleGenericUpload(inputId, statusId, objectKey, targetObject) { 
+    const file = document.getElementById(inputId).files[0]; if (!file) return; 
+    const formData = new FormData(); formData.append('image', file); 
+    try {
+        const res = await fetch('/api/upload', { method: 'POST', body: formData }); 
+        const data = await res.json(); 
+        if (data.success) { 
+            targetObject[objectKey] = data.file.path; 
+            const statusEl = document.getElementById(statusId); if(statusEl) statusEl.style.display = 'block'; 
+            window.saveHistoryState(); 
+        } else {
+            window.showToast(`Gagal: ${data.error}`, "error");
+        }
+    } catch(err) {
+        window.showToast(`Error: ${err.message}`, "error");
+    }
+}
 
 // Export System (Aman dan Langsung Akses Variabel Global)
 document.getElementById('generateBtn')?.addEventListener('click', () => { if (scenes.length === 0) return window.showToast('Belum ada scene.', 'error'); const nameInput = document.getElementById('exportFolderName'); if(nameInput) nameInput.value = currentProjectName ? currentProjectName.replace('.govp', '') : 'Proyek_Baru'; const qLabel = document.getElementById('qualityLabel'); if(qLabel) qLabel.innerText = '75%'; const slider = document.getElementById('exportQualitySlider'); if(slider) slider.value = 75; document.getElementById('exportModal')?.classList.add('active'); }); document.getElementById('exportQualitySlider')?.addEventListener('input', (e) => { const qLabel = document.getElementById('qualityLabel'); if(qLabel) qLabel.innerText = e.target.value + '%'; });
@@ -460,7 +557,7 @@ document.getElementById('btnStartExport')?.addEventListener('click', async () =>
     } catch(err) { if(progModal) progModal.classList.remove('active'); alert('Terjadi kesalahan: ' + err.message); } 
 });
 
-document.getElementById('btn-set-default-view')?.addEventListener('click', () => { if (!viewer || !currentSceneId) return; const position = viewer.getPosition(); const zoom = viewer.getZoomLevel(); const sceneIndex = scenes.findIndex(s => s.id === currentSceneId); if (sceneIndex !== -1) { scenes[sceneIndex].pitch = position.pitch; scenes[sceneIndex].yaw = position.yaw; scenes[sceneIndex].zoomLvl = zoom; const canvas = document.querySelector('#panorama canvas'); if (canvas) { const thumbData = canvas.toDataURL('image/jpeg', 0.8); scenes[sceneIndex].defaultViewThumb = thumbData; const statusEl = document.getElementById('default-view-status'); if(statusEl) statusEl.style.display = 'none'; const imgEl = document.getElementById('default-view-img'); if(imgEl) { imgEl.src = thumbData; imgEl.style.display = 'block'; } window.saveHistoryState(); window.showToast("Default View & Thumbnail disimpan!", "success"); } } }); 
+document.getElementById('btn-set-default-view')?.addEventListener('click', () => { if (!viewer || !currentSceneId) return; const position = viewer.getPosition(); const zoom = viewer.getZoomLevel(); const sceneIndex = scenes.findIndex(s => s.id === currentSceneId); if (sceneIndex !== -1) { scenes[sceneIndex].pitch = position.pitch; scenes[sceneIndex].yaw = position.yaw; scenes[sceneIndex].zoomLvl = zoom; const canvas = document.querySelector('#panorama canvas'); if (canvas) { const thumbData = canvas.toDataURL('image/jpeg', 0.8); scenes[sceneIndex].defaultViewThumb = thumbData; const statusEl = document.getElementById('default-view-status'); if(statusEl) statusEl.style.display = 'none'; const imgEl = document.getElementById('default-view-img'); if(imgEl) { imgEl.src = thumbData; imgEl.style.display = 'block'; } window.saveHistoryState(); window.showToast("Default View & Thumbnail disimpan!", "success"); window.logUserAction('CAPTURE_VIEW', { sceneId: currentSceneId }); } } });
 window.renderPropertiesUI = function() { const scene = scenes.find(s => s.id === currentSceneId); const emptyProp = document.getElementById('propertiesEmpty'); if(emptyProp) emptyProp.style.display = scene ? 'none' : 'block'; const formProp = document.getElementById('propertiesForm'); if(formProp) formProp.style.display = scene ? 'block' : 'none'; if (!scene) return; const titleInp = document.getElementById('propSceneTitle'); if(titleInp) titleInp.value = scene.title || ''; const authorInp = document.getElementById('propAuthor'); if(authorInp) authorInp.value = scene.author || ''; const firstCheck = document.getElementById('propIsFirstScene'); if(firstCheck) firstCheck.checked = (currentSceneId === firstSceneId); if (scene.defaultViewThumb) { const statusEl = document.getElementById('default-view-status'); if(statusEl) statusEl.style.display = 'none'; const imgEl = document.getElementById('default-view-img'); if(imgEl) { imgEl.src = scene.defaultViewThumb; imgEl.style.display = 'block'; } } else { const statusEl = document.getElementById('default-view-status'); if(statusEl) statusEl.style.display = 'block'; const imgEl = document.getElementById('default-view-img'); if(imgEl) imgEl.style.display = 'none'; } };
 document.getElementById('propSceneTitle')?.addEventListener('input', (e) => { if (!currentSceneId) return; scenes.find(s => s.id === currentSceneId).title = e.target.value; const titleText = document.querySelector(`.scene-item[data-id=\"${currentSceneId}\"] .scene-title`); if(titleText) titleText.innerText = e.target.value || 'Untitled'; }); document.getElementById('propSceneTitle')?.addEventListener('change', () => window.saveHistoryState());
 document.getElementById('propAuthor')?.addEventListener('input', (e) => { if (!currentSceneId) return; scenes.find(s => s.id === currentSceneId).author = e.target.value; }); document.getElementById('propAuthor')?.addEventListener('change', () => window.saveHistoryState());
@@ -487,3 +584,85 @@ window.addEventListener('keydown', function(e) { if (e.ctrlKey && e.key.toLowerC
 
 document.getElementById('menu-undo')?.addEventListener('click', (e) => { e.preventDefault(); window.undoHistory(); });
 document.getElementById('menu-redo')?.addEventListener('click', (e) => { e.preventDefault(); window.redoHistory(); });
+
+// =========================================================================
+// SISTEM KEAMANAN LISENSI (CLIENT-SIDE)
+// =========================================================================
+
+// 1. Cek Lisensi otomatis saat aplikasi (browser) dimuat
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const res = await fetch('/api/check-license');
+        const data = await res.json();
+        
+        const badge = document.getElementById('licenseStatusBadge');
+
+        if (!data.active) {
+            // JIKA LISENSI KOSONG / BAJAKAN
+            if (badge) {
+                badge.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
+                badge.style.color = '#ff6b6b';
+                badge.style.borderColor = '#dc3545';
+                badge.innerText = '⚠️ BELUM TERAKTIVASI';
+            }
+
+            const modal = document.getElementById('licenseModal');
+            if (modal) { modal.classList.add('active'); modal.style.pointerEvents = 'auto'; }
+            const mId = document.getElementById('machineIdDisplay');
+            if (mId) mId.innerText = data.machineId;
+            
+        } else {
+            // JIKA LISENSI RESMI (PRO)
+            console.log("[System] Lisensi Valid. Aplikasi Siap Digunakan.");
+            if (badge) {
+                badge.style.backgroundColor = 'rgba(40, 167, 69, 0.15)';
+                badge.style.color = '#4ade80';
+                badge.style.borderColor = '#28a745';
+                badge.innerHTML = '✅ PRO TERVERIFIKASI';
+                badge.title = `Hardware ID: ${data.machineId}`; // Muncul jika di-hover mouse
+            }
+        }
+    } catch(e) { 
+        console.error("Gagal menghubungi server lisensi", e); 
+    }
+});
+
+// 2. Aksi Tombol Aktivasi
+document.getElementById('btnActivateLicense')?.addEventListener('click', async () => {
+    document.getElementById('licenseModal').classList.remove('active');
+            window.logUserAction('APP_ACTIVATED', { status: 'success' });
+            
+            // UPDATE LENCANA SECARA INSTAN TANPA REFRESH
+            const badge = document.getElementById('licenseStatusBadge');
+            if (badge) {
+                badge.style.backgroundColor = 'rgba(40, 167, 69, 0.15)';
+                badge.style.color = '#4ade80';
+                badge.style.borderColor = '#28a745';
+                badge.innerHTML = '✅ PRO TERVERIFIKASI';
+            }
+    const keyInput = document.getElementById('licenseKeyInput').value.trim();
+    if (!keyInput) {
+        return window.showToast('Harap masukkan License Key!', 'error');
+    }
+    
+    try {
+        // Kirim Lisensi ke Backend
+        const res = await fetch('/api/activate-license', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: keyInput })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            window.showToast(data.message, 'success');
+            // Tutup Layar Kunci
+            document.getElementById('licenseModal').classList.remove('active');
+            window.logUserAction('APP_ACTIVATED', { status: 'success' }); // Catat di Telemetri
+        } else {
+            window.showToast(data.error || "Aktivasi Gagal", 'error');
+        }
+    } catch(e) {
+        window.showToast('Koneksi ke server gagal', 'error');
+    }
+});

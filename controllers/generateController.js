@@ -1,13 +1,35 @@
 const fs = require('fs-extra');
 const path = require('path');
 const sharp = require('sharp');
+const { machineIdSync } = require('node-machine-id'); // <-- Cukup tambahkan pemanggil Lisensi ini saja
 
 const rootDir = path.join(__dirname, '..');
-
 const generateVirtualTour = async (req, res) => {
-    // Menerima parameter lengkap termasuk skinConfig (Shapes) dan tourSettings (Plugins)
-    const { scenes, folderName, introVideo, welcomeText, skinConfig, firstSceneId, mediaVideo360, exportQuality, tourSettings } = req.body;
 
+    // 🛡️ PENGECEKAN LISENSI SEBELUM EXPORT
+    const currentMachineId = machineIdSync({ original: true });
+    const LICENSE_FILE = path.join(__dirname, '../license.key');
+    
+    if (!fs.existsSync(LICENSE_FILE)) {
+        return res.status(403).json({ success: false, message: 'Software belum teraktivasi. Hubungi pengembang untuk lisensi!' });
+    }
+
+    // =======================================================
+    // 🛠️ BUG FIX: NORMALISASI DATA (Mencegah Error .map is not a function)
+    // =======================================================
+    // Jika browser mengirimkan data sebagai Teks (String), kita ubah paksa kembali menjadi Array/JSON
+    if (typeof req.body.scenes === 'string') req.body.scenes = JSON.parse(req.body.scenes);
+    if (typeof req.body.skinConfig === 'string') req.body.skinConfig = JSON.parse(req.body.skinConfig);
+    if (typeof req.body.mediaVideo360 === 'string') req.body.mediaVideo360 = JSON.parse(req.body.mediaVideo360);
+    if (typeof req.body.tourSettings === 'string') req.body.tourSettings = JSON.parse(req.body.tourSettings);
+
+    // Jika data scenes rusak menjadi Objek (bukan Array), kita paksa ubah jadi Array
+    if (req.body.scenes && !Array.isArray(req.body.scenes)) {
+        req.body.scenes = Object.values(req.body.scenes);
+    }
+
+    // Sekarang kita bisa aman membedah req.body
+    const { scenes, folderName, introVideo, welcomeText, skinConfig, firstSceneId, mediaVideo360, exportQuality, tourSettings } = req.body;
     if (!scenes || scenes.length === 0 || !folderName) { return res.status(400).json({ success: false, message: 'Data tidak valid.' }); }
     const imgQuality = exportQuality ? parseInt(exportQuality) : 75;
 
@@ -205,7 +227,7 @@ const generateVirtualTour = async (req, res) => {
         .skip-btn { position: absolute; bottom: 30px; right: 30px; padding: 10px 25px; font-size: 16px; color: #fff; background-color: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 30px; cursor: pointer; z-index: 100000; backdrop-filter: blur(5px); display: none; transition: background 0.3s; }
         .skip-btn:hover { background-color: rgba(255,255,255,0.4); }
         #welcome-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); z-index: 9000; display: none; cursor: pointer; transition: opacity 0.5s ease; }
-        #welcome-panel { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; max-width: 90%; min-height: 250px; background-image: url('${desktopFrameUrl}'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; display: flex; justify-content: center; align-items: center; padding: 60px 80px; box-sizing: border-box; text-align: center; }
+        #welcome-panel { position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%); width: 800px; max-width: 90%; min-height: 250px; background-image: url('${desktopFrameUrl}'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; display: flex; justify-content: center; align-items: center; padding: 60px 80px; box-sizing: border-box; text-align: center; }
         #welcome-panel p { font-size: 16px; color: #fff; line-height: 1.6; text-shadow: 1px 1px 4px #000; margin: 0; font-weight: 500; }
         .editor-hs-icon { border-radius: 50%; border: 2px solid white; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 10px rgba(0,0,0,0.5); font-weight: bold; color: white; transition: 0.2s; }
         .editor-hs-icon:hover { transform: scale(1.1); border-color: #007acc; }

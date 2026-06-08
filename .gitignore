@@ -1,4 +1,19 @@
-node_modules
-projects
-exports
-uploads
+# Dependencies (Folder Modul Node)
+node_modules/
+
+# Sistem Penyimpanan Lokal Aplikasi (Wajib pakai slash di akhir)
+projects/
+exports/
+uploads/
+
+# Berkas Log/Rekam Jejak Sistem (Winston & Morgan)
+logs/
+*.log
+
+# File Konfigurasi Rahasia & Keamanan Komersial
+.env
+license.key
+
+# Tambahan Opsional: File sampah bawaan sistem operasi (Windows/Mac)
+.DS_Store
+Thumbs.db
