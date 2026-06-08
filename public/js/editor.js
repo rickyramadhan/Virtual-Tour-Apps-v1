@@ -551,8 +551,13 @@ document.getElementById('btnStartExport')?.addEventListener('click', async () =>
     if(progModal) progModal.classList.add('active'); if(progBar) progBar.style.width = '0%'; if(progText) progText.innerText = 'Menyiapkan server...'; if(logBox) logBox.innerHTML = '[System] Memulai komputasi ekspor...<br>'; 
     try { 
         const welcomeText = document.getElementById('welcomeTextInput') ? document.getElementById('welcomeTextInput').value.trim() : ''; 
+        // --- Multi-resolusi tiles ---
+// Ambil nilai multi-resolusi dari modal export
+const enableMultiRes = document.getElementById('enableMultiRes')?.checked || false;
+const tileLevels = enableMultiRes ? parseInt(document.getElementById('tileLevelsSlider')?.value || '3') : 1;
+console.log('[DEBUG] enableMultiRes:', enableMultiRes, 'tileLevels:', tileLevels); // opsional, untuk cek di console browser
         // MEMASTIKAN skinConfig IKUT TERBAWA!
-        const payload = { scenes, folderName, introVideo, welcomeText, skinConfig, firstSceneId, mediaVideo360, exportQuality, tourSettings }; 
+const payload = { scenes, folderName, introVideo, welcomeText, skinConfig, firstSceneId, mediaVideo360, exportQuality, tourSettings, tileLevels };
         const res = await fetch('/api/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); const reader = res.body.getReader(); const decoder = new TextDecoder('utf-8'); let buffer = ''; while (true) { const { done, value } = await reader.read(); if (done) break; buffer += decoder.decode(value, { stream: true }); const lines = buffer.split('\n'); buffer = lines.pop(); for (const line of lines) { if (!line.trim()) continue; const data = JSON.parse(line); if (data.type === 'progress') { if(progBar) progBar.style.width = data.percent + '%'; if(progText) progText.innerText = `${data.message} (${data.percent}%)`; if (data.detail && logBox) { logBox.innerHTML += `> ${data.detail}<br>`; logBox.scrollTop = logBox.scrollHeight; } } else if (data.type === 'success') { if(progBar) progBar.style.width = '100%'; if(progText) progText.innerText = 'Export Selesai!'; if (logBox) logBox.innerHTML += `<span style="color: #00ff00;">> [System] 🎉 Selesai!</span><br>`; setTimeout(() => { if(progModal) progModal.classList.remove('active'); alert(`Selesai!\\nFolder: ${data.folderName}`); }, 1000); } else if (data.type === 'error') { throw new Error(data.message); } } } 
     } catch(err) { if(progModal) progModal.classList.remove('active'); alert('Terjadi kesalahan: ' + err.message); } 
 });

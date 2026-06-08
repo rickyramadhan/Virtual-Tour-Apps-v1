@@ -443,6 +443,30 @@
     </div>
 
     <div id="exportModal" class="modal">
+        <!-- Opsi Multi Resolusi -->
+<!-- Opsi Multi Resolusi -->
+<div class="form-group mt-25">
+    <label class="slider-header">
+        <span>🗺️ Multi‑Resolusi Tiles</span>
+        <span id="multiResStatus" class="quality-val">Aktif (3 level)</span>
+    </label>
+    <div style="display: flex; align-items: center; gap: 15px; margin-top: 8px;">
+        <label class="checkbox-wrap" style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" id="enableMultiRes" checked style="width: 18px; height: 18px;">
+            <span class="text-13">Aktifkan (zoom lebih halus)</span>
+        </label>
+        <div id="levelControlWrap" style="flex:1; display: flex; align-items: center; gap: 10px;">
+            <span class="text-11" style="color: var(--text-muted);">Jumlah level:</span>
+            <input type="range" id="tileLevelsSlider" min="1" max="4" value="3" step="1" style="flex:1;">
+            <span id="tileLevelsValue" class="text-13" style="min-width: 40px;">3</span>
+        </div>
+    </div>
+    <div id="multiResHint" class="helper-text-export" style="margin-top: 10px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
+        💡 <strong>Level 1</strong> = hanya satu resolusi (ukuran kecil, zoom kurang tajam). <br>
+        🔼 <strong>Level 3–4</strong> = file lebih besar (≈1.5–2×) tapi zoom sangat halus di semua perangkat. <br>
+        ⚡ Non‑aktifkan = mode single (kompatibel dengan export lama).
+    </div>
+</div>
         <div class="modal-content modal-export-box">
             <div class="modal-title">Konfigurasi Export Virtual Tour</div>
             <div class="form-group"><label>Nama Folder Export</label><input type="text" id="exportFolderName" class="form-control" placeholder="Contoh: Proyek_Gedung"></div>
@@ -486,5 +510,29 @@
         </div>
     </div>
     <script type="module" src="js/editor.js"></script>
+    <script>
+    (function() {
+        const cb = document.getElementById('enableMultiRes');
+        const sliderWrap = document.getElementById('levelControlWrap');
+        const slider = document.getElementById('tileLevelsSlider');
+        const levelSpan = document.getElementById('tileLevelsValue');
+        const statusSpan = document.getElementById('multiResStatus');
+        if (!cb) return;
+        function updateUI() {
+            const enabled = cb.checked;
+            if (sliderWrap) sliderWrap.style.opacity = enabled ? '1' : '0.5';
+            if (sliderWrap) sliderWrap.style.pointerEvents = enabled ? 'auto' : 'none';
+            if (statusSpan) statusSpan.innerText = enabled ? `Aktif (${slider.value} level)` : 'Non‑aktif (single level)';
+        }
+        cb.addEventListener('change', updateUI);
+        if (slider) {
+            slider.addEventListener('input', function() {
+                levelSpan.innerText = this.value;
+                if (cb.checked) statusSpan.innerText = `Aktif (${this.value} level)`;
+            });
+        }
+        updateUI();
+    })();
+</script>
 </body>
 </html>
