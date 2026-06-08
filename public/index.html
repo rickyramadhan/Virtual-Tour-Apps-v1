@@ -167,8 +167,22 @@
                 <button class="tab-btn active" data-tab="tab-skin-custom" style="flex: 0 1 auto; padding: 10px 25px; margin-right: 5px; border-radius: 6px 6px 0 0;">🛠️ Custom Design</button>
                 <button class="tab-btn" data-tab="tab-skin-template" style="flex: 0 1 auto; padding: 10px 25px; margin-right: 5px; border-radius: 6px 6px 0 0;">📑 Template Design</button>
                 <button class="tab-btn" data-tab="tab-skin-setup" style="flex: 0 1 auto; padding: 10px 25px; border-radius: 6px 6px 0 0;">⚙️ Setup Welcome Text</button>
+                <button class="tab-btn" data-tab="tab-skin-code" style="flex: 0 1 auto; padding: 10px 25px; border-radius: 6px 6px 0 0;">💻 Custom Code (CSS/JS)</button>
             </div>
-
+            <!-- Panel Custom Code (Tambahkan di dalam container yang sama dengan tab-pane lainnya) -->
+            <div id="tab-skin-code" class="tab-pane" style="display:none; padding: 20px;">
+                <h4 style="color:white; margin-bottom:10px;">Inject External Files & Custom CSS</h4>
+                <p style="color:#aaa; font-size:12px;">Fitur ini memungkinkan Anda menambahkan file CSS/JS eksternal (seperti Pano2VR) atau CSS inline ke dalam hasil Export.</p>
+                
+                <label style="color:white; display:block; margin-top:15px;">External CSS URLs (Satu URL per baris)</label>
+                <textarea id="skinExternalCss" class="form-control" rows="3" style="background:#222; color:white; border:1px solid #444;" placeholder="https://example.com/style.css"></textarea>
+                
+                <label style="color:white; display:block; margin-top:15px;">External JS URLs (Satu URL per baris)</label>
+                <textarea id="skinExternalJs" class="form-control" rows="3" style="background:#222; color:white; border:1px solid #444;" placeholder="https://example.com/script.js"></textarea>
+                
+                <label style="color:white; display:block; margin-top:15px;">Inline CSS (Tambahan Style Manual)</label>
+                <textarea id="skinInlineCss" class="form-control" rows="6" style="background:#222; color:white; border:1px solid #444; font-family:monospace;" placeholder=".el-12345 { animation: bounce 2s infinite; }"></textarea>
+            </div>
             <div id="tab-skin-custom" class="tab-pane active" style="display: flex; flex: 1; gap: 20px; overflow: hidden; padding: 0 20px 20px 20px; width: 100%;">
                 <div class="skin-left-panel">
                     <div class="skin-canvas-wrapper">

@@ -119,7 +119,7 @@ function renderSkinElements() {
     const canvas = document.getElementById('skinEditorCanvas'); if(!canvas) return; Array.from(canvas.querySelectorAll('.skin-el')).forEach(el => el.remove());
     let deviceElements = skinConfig.uiElements.filter(e => (e.targetDevice || 'desktop') === currentSkinPreviewMode);
     deviceElements.forEach((elData, idx) => {
-        const div = document.createElement('div'); div.id = elData.id; div.className = `skin-el ${elData.type === 'text' ? 'skin-el-text' : 'skin-el-img'}`;
+        const div = document.createElement('div'); div.id = elData.id; div.className = `skin-el ${elData.type === 'text' ? 'skin-el-text' : 'skin-el-img'} ${elData.uniqueClass || ''}`; 
         if(elData.id === activeSkinElementId) div.classList.add('selected');
         div.style.zIndex = 10 + idx; div.style.left = `${elData.left}%`; div.style.top = `${elData.top}%`; div.style.width = `${elData.width}%`; div.style.height = `${elData.height}%`;
         div.style.opacity = elData.opacity !== undefined ? elData.opacity : 1; div.style.borderRadius = elData.type === 'circle' ? '50%' : `${elData.borderRadius || 0}px`;
@@ -139,9 +139,9 @@ function renderSkinElements() {
 }
 
 window.createNewSkinElement = function(type) {
-    const newId = 'ui_' + Date.now(); let defWidth = 15; let defHeight = 15; let defBgColor = 'transparent'; let defBgTrans = true; let defContent = '';
+    const newId = 'ui_' + Date.now(); const uniqueClass = 'el-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9); let defWidth = 15; let defHeight = 15; let defBgColor = 'transparent'; let defBgTrans = true; let defContent = '';
     if(type === 'text') { defWidth = 25; defHeight = 10; defContent = 'Teks Baru'; } else if (type === 'rect') { defWidth = 20; defHeight = 20; defBgColor = '#007acc'; defBgTrans = false; } else if (type === 'circle') { defWidth = 15; defHeight = 15; defBgColor = '#e74c3c'; defBgTrans = false; } else if (type === 'line') { defWidth = 30; defHeight = 0.5; defBgColor = '#ffffff'; defBgTrans = false; }
-    const newEl = { id: newId, type: type, targetDevice: currentSkinPreviewMode, left: 40, top: 40, width: defWidth, height: defHeight, content: defContent, color: '#ffffff', fontSize: 16, fontFamily: 'Roboto', fontWeight: 400, textAlign: 'center', verticalAlign: 'center', wordWrap: true, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowColor: '#000000', opacity: 1, borderRadius: type === 'circle' ? 50 : 0, bgColor: defBgColor, bgTransparent: defBgTrans, borderWidth: 0, borderColor: '#ffffff', action: 'none', target: '' };
+    const newEl = { id: newId, uniqueClass: uniqueClass, type: type, targetDevice: currentSkinPreviewMode, left: 40, top: 40, width: defWidth, height: defHeight, content: defContent, color: '#ffffff', fontSize: 16, fontFamily: 'Roboto', fontWeight: 400, textAlign: 'center', verticalAlign: 'center', wordWrap: true, shadowX: 0, shadowY: 0, shadowBlur: 0, shadowColor: '#000000', opacity: 1, borderRadius: type === 'circle' ? 50 : 0, bgColor: defBgColor, bgTransparent: defBgTrans, borderWidth: 0, borderColor: '#ffffff', action: 'none', target: '' };
     if (!skinConfig.uiElements) skinConfig.uiElements = []; skinConfig.uiElements.push(newEl); window.selectSkinElement(newId); renderSkinElements(); window.saveHistoryState();
     window.logUserAction('ADD_SKIN_ELEMENT', { elementType: type, device: currentSkinPreviewMode });
 };
@@ -572,6 +572,10 @@ const skinSelect = document.getElementById('skinTemplateSelect'); const customSk
 window.getApplicationState = function() { return { version: "3.5", projectName: currentProjectName || "Untitled_Project", firstSceneId: firstSceneId, scenes: scenes, mediaVideo360: mediaVideo360, introVideo: introVideo, skinConfig: skinConfig, tourSettings: tourSettings, welcomeText: document.getElementById('welcomeTextInput') ? document.getElementById('welcomeTextInput').value : '' }; };
 
 window.applyApplicationState = function(data) { 
+    // Di dalam window.applyApplicationState, setelah loading skinConfig:
+if (document.getElementById('skinExternalCss')) document.getElementById('skinExternalCss').value = skinConfig.externalCss || '';
+if (document.getElementById('skinExternalJs')) document.getElementById('skinExternalJs').value = skinConfig.externalJs || '';
+if (document.getElementById('skinInlineCss')) document.getElementById('skinInlineCss').value = skinConfig.inlineCss || '';
     firstSceneId = data.firstSceneId || (data.scenes && data.scenes.length > 0 ? data.scenes[0].id : null); scenes = data.scenes || []; mediaVideo360 = data.mediaVideo360 || []; introVideo = data.introVideo || { desktop: null, mobile: null }; skinConfig = data.skinConfig || { template: 'default', customDesktop: null, customMobile: null, uiElements: [] }; if (!skinConfig.uiElements) skinConfig.uiElements = []; 
     tourSettings = data.tourSettings || { autorotate: false, gallery: false, compass: false, resolution: false, map: false, navbar: true };
     ['Autorotate', 'Gallery', 'Compass', 'Resolution', 'Map', 'Navbar'].forEach(key => { const cb = document.getElementById('setting' + key); if (cb) { if(key==='Navbar' && data.tourSettings?.navbar === undefined) cb.checked = true; else cb.checked = tourSettings[key.toLowerCase()] || false; } });
@@ -582,6 +586,12 @@ window.applyApplicationState = function(data) {
     currentSceneId = null; selectedSceneIds = []; lastClickedSceneId = null; if (viewer) { viewer.destroy(); viewer = null; } 
     if (scenes.length > 0) { selectedSceneIds = [scenes[0].id]; window.loadSceneToViewer(scenes[0].id); } else { const emptyEl = document.getElementById('emptyState'); if(emptyEl) emptyEl.style.display = 'flex'; const toolEl = document.getElementById('toolbar'); if(toolEl) toolEl.style.display = 'none'; window.renderSceneList(); window.renderHotspotListUI(); } window.renderVideo360List(); 
     historyStack = []; historyIndex = -1; window.saveHistoryState();
+    //  MIGRASI: Tambahkan uniqueClass ke elemen lama yang belum punya
+    skinConfig.uiElements.forEach(el => {
+        if (!el.uniqueClass) {
+            el.uniqueClass = 'el-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+    });
 };
 
 window.quickSaveProject = async function() { if (scenes.length === 0) return window.showToast("Proyek kosong!", "error"); try { const stateData = window.getApplicationState(); const jsonString = JSON.stringify(stateData, null, 2); if (!currentFileHandle) { currentFileHandle = await window.showSaveFilePicker({ suggestedName: currentProjectName || 'Proyek_Baru.govp', types: [{ description: 'GoVirtual Project', accept: { 'application/json': ['.govp'] } }] }); } const writable = await currentFileHandle.createWritable(); await writable.write(jsonString); await writable.close(); currentProjectName = currentFileHandle.name; document.title = `GoVirtual - ${currentProjectName}`; window.showToast(`💾 Tersimpan!`, "success"); } catch (err) { if (err.name !== 'AbortError') alert("Gagal menyimpan: " + err.message); } }
@@ -670,4 +680,18 @@ document.getElementById('btnActivateLicense')?.addEventListener('click', async (
     } catch(e) {
         window.showToast('Koneksi ke server gagal', 'error');
     }
+});
+
+['skinExternalCss', 'skinExternalJs', 'skinInlineCss'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', (e) => {
+        const key = id.replace('skin', '').charAt(0).toLowerCase() + id.replace('skin', '').slice(1);
+        // Konversi 'externalCss' menjadi format yang kita mau
+        let configKey = key;
+        if(key === 'externalCss') configKey = 'externalCss';
+        if(key === 'externalJs') configKey = 'externalJs';
+        if(key === 'inlineCss') configKey = 'inlineCss';
+        
+        skinConfig[configKey] = e.target.value;
+        window.saveHistoryState();
+    });
 });
