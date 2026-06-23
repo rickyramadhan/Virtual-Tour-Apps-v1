@@ -527,3 +527,346 @@ body.light-mode .device-mobile::before { background: #e4e6e9 !important; }
 #skinLayersList::-webkit-scrollbar-thumb:hover {
     background-color: var(--accent);
 }
+/* ==========================================================================
+📚 MEDIA LIBRARY STYLES - FIXED LAYOUT
+========================================================================== */
+.workspace-library .workspace-box {
+    padding: 20px;
+}
+
+.library-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.library-toolbar .btn-primary {
+    padding: 8px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.library-toolbar select,
+.library-toolbar input[type="text"] {
+    padding: 8px 12px;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    outline: none;
+}
+
+.library-toolbar select {
+    width: 160px;
+}
+
+.library-toolbar input[type="text"] {
+    width: 220px;
+}
+
+.library-asset-count {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    max-height: 55vh;
+    overflow-y: auto;
+    padding: 15px;
+    background: var(--bg-dark);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.library-card {
+    background: var(--bg-panel);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.library-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 122, 204, 0.2);
+}
+
+.library-card.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent);
+}
+
+.library-card-thumb {
+    width: 100%;
+    height: 100px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--bg-hover);
+    position: relative;
+}
+
+.library-card-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: var(--accent);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    z-index: 2;
+}
+
+.library-card-info {
+    padding: 8px;
+}
+
+.library-card-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.library-card-meta {
+    font-size: 10px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+}
+
+.library-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.library-preview-large {
+    width: 100%;
+    max-height: 350px;
+    object-fit: contain;
+    background: var(--bg-dark);
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.library-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+}
+
+.library-detail-label {
+    color: var(--text-muted);
+}
+
+.library-detail-value {
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+/* Light mode overrides */
+body.light-mode .library-grid {
+    background: #f8f9fa;
+}
+
+body.light-mode .library-card {
+    background: white;
+}
+
+.menu-icon img {
+    width: 16px;
+    height: 16px;
+}
+
+/* ==========================================================================
+   --- DASHBOARD UI STYLES ---
+   ========================================================================== */
+.dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    height: 100%;
+}
+
+.dash-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dash-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.dash-card-title {
+    font-size: 16px;
+    color: var(--text-main);
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+}
+
+/* Quick Actions */
+.quick-action-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dash-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 15px;
+    color: var(--text-main);
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dash-action-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.dash-action-btn .icon { font-size: 24px; }
+.dash-action-btn .text strong { display: block; font-size: 14px; margin-bottom: 3px; }
+.dash-action-btn .text span { font-size: 11px; color: var(--text-muted); }
+
+/* Checklist Onboarding */
+.dash-checklist { list-style: none; padding: 0; }
+.dash-checklist li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    font-size: 13px;
+    color: var(--text-muted);
+    border-bottom: 1px dashed var(--border);
+}
+.dash-checklist li:last-child { border-bottom: none; }
+.dash-checklist li .check {
+    width: 24px; height: 24px;
+    background: var(--bg-dark); border: 1px solid var(--border);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: bold;
+}
+.dash-checklist li.done { color: var(--text-main); }
+.dash-checklist li.done .check { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* Empty State & License */
+.dash-empty-state {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 150px; text-align: center; background: rgba(0,0,0,0.2); border-radius: 8px;
+}
+
+.dash-license-badge {
+    display: flex; align-items: center; gap: 15px;
+    padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 14px;
+}
+.dash-license-badge.warning { background: rgba(241, 196, 15, 0.1); color: var(--warning); border: 1px solid var(--warning); }
+.dash-license-badge.success { background: rgba(46, 204, 113, 0.1); color: var(--success); border: 1px solid var(--success); }
+
+.btn-activate-sm {
+    background: var(--warning); color: #000; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer;
+}
+.btn-activate-sm:hover { opacity: 0.8; }
+
+/* ==========================================================================
+   🤖 AI CHATBOT WORKSPACE STYLES
+   ========================================================================== */
+#workspace-ai-chatbot .workspace-box {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+#workspace-ai-chatbot .upload-box-dashed {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    background: rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+#workspace-ai-chatbot .upload-box-dashed:hover {
+    border-color: var(--accent);
+    background: rgba(0, 122, 204, 0.05);
+}
+#workspace-ai-chatbot .layer-item {
+    margin-bottom: 8px;
+}
+#workspace-ai-chatbot .layer-item:last-child {
+    margin-bottom: 0;
+}
+/* Animasi kecil saat hover tombol simpan */
+#btnSaveAiConfig {
+    transition: all 0.2s ease;
+}
+#btnSaveAiConfig:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 122, 204, 0.4);
+}
+
+/* ==========================================================================
+   🎨 FIGMA-STYLE BOUNDING BOX & SELECTION
+   ========================================================================== */
+
+/* 1. Kotak Seleksi Utama (Garis Biru Solid + Cursor Grab) */
+.skin-element.selected, 
+.canvas-element.selected {
+    outline: 2px solid var(--accent) !important; /* Gunakan warna biru/aksen aplikasi */
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5) !important; /* Efek pop-out */
+    cursor: grab; /* Kursor default untuk menggeser */
+}
+
+/* Saat sedang digeser, ubah kursor mengepal */
+.skin-element.selected:active, 
+.canvas-element.selected:active {
+    cursor: grabbing;
+}
+
+/* 2. Resize Handles (Titik Sudut ala Figma) */
+.resize-handle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #ffffff;
+    border: 2px solid var(--accent);
+    border-radius: 2px; /* Sedikit membulat ala Figma modern */
+    box-sizing: border-box;
+    z-index: 9999;
+    pointer-events: auto;
+    
+    /* Trik Hitbox: Memperbesar area yang bisa diklik secara tak kasat mata */
+    padding: 8px; 
+    background-clip: content-box;
+    transform: translate(-50%, -50%); /* Agar persis di tengah sudut */
+}
+
+/* 3. Posisi dan Kursor Sudut */
+.resize-handle.nw { top: 0; left: 0; cursor: nwse-resize; } /* Kiri Atas */
+.resize-handle.ne { top: 0; left: 100%; cursor: nesw-resize; } /* Kanan Atas */
+.resize-handle.sw { top: 100%; left: 0; cursor: nesw-resize; } /* Kiri Bawah */
+.resize-handle.se { top: 100%; left: 100%; cursor: nwse-resize; } /* Kanan Bawah */

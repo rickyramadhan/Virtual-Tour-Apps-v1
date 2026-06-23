@@ -1,15 +1,57 @@
 {
-  "name": "v1",
+  "name": "govirtual-app",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
+  "description": "Govirtual Application",
+  "main": "main.js",
+  "author": "Govirtual",
   "license": "ISC",
   "type": "commonjs",
+  "scripts": {
+    "start": "electron .",
+    "dev": "nodemon server.js",
+    "obfuscate": "node obfuscate.js",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win --x64",
+    "build:portable": "electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.govirtual.app",
+    "productName": "Govirtual App",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!dist/**/*",
+      "!.git/**/*",
+      "!node_modules/.cache/**/*",
+      "!*.log",
+      "!apps - Copy.zip"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Govirtual App",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico"
+    }
+  },
   "dependencies": {
     "archiver": "^8.0.0",
     "dotenv": "^17.4.2",
@@ -25,6 +67,9 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.0.4",
+    "electron": "^42.4.0",
+    "electron-builder": "^26.15.2",
     "nodemon": "^3.1.14"
   }
 }
